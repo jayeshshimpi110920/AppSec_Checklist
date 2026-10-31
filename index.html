@@ -1,0 +1,1350 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="A practical application security testing checklist and payload reference by Jayesh Shimpi.">
+<title>AppSec Testing Hub — Jayesh Shimpi</title>
+<style>
+:root{--bg:#f5f7fb;--panel:#fff;--ink:#182230;--muted:#657286;--line:#e2e8f0;--accent:#3157d5;--accent-soft:#edf1ff;--green:#14804a;--code:#111827;--shadow:0 8px 28px rgba(22,34,51,.06)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+header{height:62px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 22px;position:sticky;top:0;z-index:5}
+.brand{font-weight:750;font-size:16px;letter-spacing:-.3px}.brand small{display:block;color:var(--muted);font-size:11px;font-weight:500;letter-spacing:0}.owner{font-size:12px;color:var(--muted)}.owner b{color:var(--ink)}
+.app{display:grid;grid-template-columns: minmax(205px,19%) minmax(330px,40.5%) minmax(330px,40.5%);min-height:calc(100vh - 62px)}
+.sidebar{background:#fff;border-right:1px solid var(--line);padding:17px 12px;position:sticky;top:62px;height:calc(100vh - 62px);overflow:auto}
+.side-title{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:#8994a5;font-weight:750;padding:0 10px 10px}
+.search{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px 11px;margin-bottom:12px;font:inherit;outline:none}.search:focus{border-color:var(--accent)}
+.nav{display:flex;flex-direction:column;gap:3px}.nav button{border:0;background:transparent;text-align:left;padding:8px 10px;border-radius:8px;color:#475569;font:500 12px/1.35 inherit;cursor:pointer}.nav button:hover{background:#f3f5fa}.nav button.active{background:var(--accent-soft);color:var(--accent);font-weight:700}.nav .group{padding:14px 10px 5px;color:#9aa4b2;text-transform:uppercase;font-size:9px;letter-spacing:1px;font-weight:800}
+main,.payload-panel{padding:23px 22px;min-width:0}.payload-panel{border-left:1px solid var(--line);background:#fafbfd}
+.mobile-nav{display:none}.eyebrow{color:var(--accent);font-size:10px;text-transform:uppercase;letter-spacing:1.2px;font-weight:800}
+h1{font-size:24px;letter-spacing:-.7px;margin:5px 0 5px}.intro{color:var(--muted);margin:0 0 17px;max-width:760px}
+.topline{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}.pill{font-size:10px;padding:4px 8px;border-radius:99px;background:#eef2f7;color:#526174;white-space:nowrap}
+.stats{display:flex;gap:8px;flex-wrap:wrap;margin:13px 0 17px}.stat{border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 10px;color:var(--muted);font-size:11px}.stat b{color:var(--ink);font-size:13px;margin-right:4px}
+.progress-wrap{background:#e8edf5;height:6px;border-radius:99px;overflow:hidden;margin:8px 0 4px}.progress{height:100%;background:var(--green);width:0;transition:width .2s}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:12px 0 17px}.btn{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 10px;font:600 11px inherit;color:#475569;cursor:pointer}.btn:hover{border-color:#aab7ca}.btn.primary{background:var(--accent);border-color:var(--accent);color:white}
+.level{border:1px solid var(--line);border-radius:12px;background:#fff;margin:12px 0;box-shadow:0 2px 8px rgba(22,34,51,.025);overflow:hidden}
+.level-head{padding:12px 14px;border-bottom:1px solid #edf0f4;display:flex;justify-content:space-between;align-items:center;gap:10px}.level-head h2{font-size:13px;margin:0}.level-head span{font-size:10px;color:var(--muted)}
+.check{display:grid;grid-template-columns:18px 1fr;gap:9px;padding:11px 14px;border-bottom:1px solid #f0f2f6}.check:last-child{border-bottom:0}.check input{margin:3px 0 0;accent-color:var(--green);width:14px;height:14px}.check strong{font-size:12px;display:block}.check p{font-size:11px;color:var(--muted);margin:3px 0 0}.check small{display:block;color:#8490a0;font-size:10px;margin-top:4px}
+.tip{border:1px solid #dbe4ff;background:#f5f7ff;padding:12px 13px;border-radius:10px;margin:13px 0}.tip b{font-size:11px}.tip p{font-size:11px;color:#58657a;margin:4px 0 0}
+.term{border:1px solid var(--line);background:#fff;padding:12px;border-radius:10px;margin:12px 0}.term h3{font-size:12px;margin:0 0 5px}.term p{font-size:11px;color:var(--muted);margin:0}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}.panel-head h2{font-size:15px;margin:0}.panel-head span{font-size:10px;color:var(--muted)}
+.tabs{display:flex;gap:5px;border-bottom:1px solid var(--line);margin:10px 0 12px}.tabs button{border:0;background:transparent;padding:8px 9px;font:600 11px inherit;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent}.tabs button.active{color:var(--accent);border-color:var(--accent)}
+.payload-intro{font-size:11px;color:var(--muted);margin:0 0 12px}.payload{background:var(--code);color:#e5e7eb;border-radius:9px;padding:10px 11px;margin:8px 0;position:relative;overflow:hidden}.payload code{font:11px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;display:block;padding-right:46px}.copy{position:absolute;right:7px;top:7px;border:1px solid #4b5563;background:#273244;color:#e5e7eb;border-radius:6px;padding:4px 7px;font-size:9px;cursor:pointer}.payload-label{font-size:10px;color:#aab6c8;margin:0 0 5px}
+.note{font-size:11px;color:var(--muted);padding:10px 0;border-top:1px solid var(--line);margin-top:12px}
+.payload-list{display:flex;flex-direction:column;gap:10px}.scenario{border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px}.scenario b{font-size:11px}.scenario p{font-size:10px;color:var(--muted);margin:3px 0 0}
+.empty{padding:25px;text-align:center;color:var(--muted);font-size:12px}
+footer{padding:14px 20px;color:#8a95a5;font-size:10px;text-align:center;border-top:1px solid var(--line);background:#fff}
+@media(max-width:900px){.app{grid-template-columns:210px 1fr}.payload-panel{grid-column:2;border-left:0;border-top:1px solid var(--line)}.sidebar{grid-row:1/3}}
+@media(max-width:650px){header{padding:0 13px}.app{display:block}.sidebar{position:relative;top:auto;height:auto;max-height:260px;border-right:0;border-bottom:1px solid var(--line)}main,.payload-panel{padding:17px 13px}.payload-panel{border-left:0}.nav{display:grid;grid-template-columns:1fr 1fr}.side-title{padding-top:5px}h1{font-size:21px}}
+</style>
+</head>
+<body>
+<header><div class="brand">AppSec Testing Hub<small>Practical security assessment workspace</small></div><div class="owner">Owner: <b>Jayesh Shimpi</b></div></header>
+<div class="app">
+<aside class="sidebar">
+  <div class="side-title">Testing topics</div>
+  <input class="search" id="search" placeholder="Find a topic…" aria-label="Search topics">
+  <nav class="nav" id="nav"></nav>
+</aside>
+<main>
+  <div class="topline"><div><div class="eyebrow" id="category">Application security</div><h1 id="title">GraphQL API Security</h1></div><span class="pill" id="levelTag">Beginner → Expert</span></div>
+  <p class="intro" id="intro"></p>
+  <div class="stats"><div class="stat"><b id="checkCount">0</b>checks</div><div class="stat"><b id="doneCount">0</b>completed</div><div class="stat"><b id="percent">0%</b>progress</div></div>
+  <div class="progress-wrap"><div class="progress" id="progress"></div></div>
+  <div class="toolbar"><button class="btn" id="expandAll">Expand all sections</button><button class="btn" id="collapseAll">Collapse all sections</button><button class="btn" id="reset">Reset this topic</button></div>
+  <div id="checklist"></div>
+  <div class="term" id="term"><h3>Key concept</h3><p></p></div>
+  <div class="tip"><b>Testing discipline</b><p>Only test systems you are authorized to assess. Start with low-impact requests, use test accounts and test data, avoid destructive actions, and agree on rate / load limits before stress testing.</p></div>
+</main>
+<section class="payload-panel">
+  <div class="panel-head"><h2>Payloads & test ideas</h2><span id="payloadCount"></span></div>
+  <p class="payload-intro">Examples are starting points, not proof of a vulnerability. Replace placeholders with values from your authorized test environment and observe the response.</p>
+  <div class="tabs"><button class="active" data-tab="payloads">Payload library</button><button data-tab="scenarios">Scenarios</button><button data-tab="notes">How to use</button></div>
+  <div id="payloads" class="payload-list"></div>
+  <div id="scenarios" class="payload-list" hidden></div>
+  <div id="notes" hidden class="note"></div>
+</section>
+</div>
+<footer>AppSec Testing Hub · Static site · Checklist state is saved in this browser only (localStorage).</footer>
+<script>
+const topics = [
+{
+id:"graphql",name:"GraphQL API Security",intro:"Assess schema exposure, resolver authorization, query execution controls and GraphQL-specific attack surfaces. Work from discovery to business logic.",term:"Introspection is a GraphQL meta-query capability that lets clients ask the server about its schema. Disabling it limits schema discovery; it does not enforce authorization or make exposed operations safe.",
+sections:[
+["Beginner · Discovery & configuration",[
+["Find GraphQL endpoints","Review application traffic, JavaScript bundles, API documentation and common paths such as /graphql, /api/graphql or versioned endpoints. Confirm the actual endpoint from observed traffic rather than relying only on guesses."],
+["Identify transport and content types","Capture valid requests and determine whether the API accepts JSON POST, GET, multipart uploads or WebSocket subscriptions. Record required headers, cookies and CSRF controls."],
+["Check introspection availability","Send a minimal `__schema` query in an authenticated and unauthenticated context. A returned schema indicates introspection is accessible; distinguish an explicit block from auth, routing, parsing or WAF errors."],
+["Retrieve schema when permitted","If introspection is available, use InQL or an introspection query to enumerate types, queries, mutations, fields, arguments, enums and input objects. Store the schema as assessment evidence."],
+["Check GraphiQL / Playground / Sandbox","Look for interactive IDEs and documentation endpoints in production. Verify whether they expose schema details or allow unauthenticated execution."],
+["Inspect error handling","Submit an invalid field, argument and variable type. Look for stack traces, resolver names, source paths, database errors and suggestions that reveal schema details."]
+]],
+["Intermediate · Authentication & authorization",[
+["Test unauthenticated operations","Replay each discovered query and mutation without credentials. Confirm that public operations are intentionally public and protected operations fail closed."],
+["Test object-level authorization (BOLA)","Change object identifiers to another test user's object. Compare results across owner, peer and privileged accounts; verify authorization is enforced in every resolver."],
+["Test field-level authorization","Request sensitive fields directly and through nested objects. Confirm that fields such as email, phone, internal notes, roles and financial data are permission-checked."],
+["Test function-level authorization","Invoke administrative queries and mutations using lower-privileged roles. Do not rely on hidden UI controls as an authorization boundary."],
+["Test mutation ownership and state","Attempt update/delete actions against another user's records and invalid workflow states using safe test records. Verify server-side ownership and transition checks."],
+["Test token and session handling","Check missing, malformed, expired, revoked and wrong-audience tokens. Confirm consistent enforcement across HTTP and WebSocket transports."]
+]],
+["Advanced · Query abuse & input handling",[
+["Review nested resolver authorization","Follow nested relationships (for example user → orders → payment details). Verify authorization is re-evaluated at each object and field boundary."],
+["Test aliases and batching limits","Send a small number of repeated aliases or batched operations, then increase gradually within agreed limits. Check per-operation and per-user throttling."],
+["Test depth and complexity controls","Construct progressively deeper and more expensive nested queries. Confirm depth, complexity, execution-time and response-size limits stop resource exhaustion."],
+["Test pagination boundaries","Try zero, negative, very large and omitted pagination values. Verify maximum page sizes, stable cursors and authorization on every returned item."],
+["Test variable coercion and validation","Supply nulls, wrong scalar types, oversized strings, unexpected arrays and boundary values. Check for validation bypasses and unhandled exceptions."],
+["Test injection in resolver inputs","Review search, sort, filter and identifier arguments for SQL/NoSQL/command injection based on the resolver's actual backend. Use non-destructive probes."],
+["Test file upload behavior","If multipart uploads exist, test file size, extension/MIME mismatch, content validation, storage permissions, malware scanning and retrieval authorization."]
+]],
+["Expert · Protocol, business logic & assurance",[
+["Test subscriptions and WebSockets","Verify connection authentication, origin checks, token expiry, per-subscription authorization and cleanup after logout or revocation."],
+["Test CSRF on cookie-authenticated GraphQL","Determine whether browsers attach session cookies to cross-site requests. Test state-changing mutations with origin/CSRF protections and appropriate content-type enforcement."],
+["Test GET mutation handling","Verify mutations are not executed through GET and caches/proxies do not treat state-changing operations as safe or cacheable."],
+["Test persisted / allow-listed queries","If persisted queries are used, test unknown hashes, variable tampering, operation allow-lists and whether unrestricted ad-hoc queries remain enabled."],
+["Test cache isolation","Check whether responses containing user-specific data are cached and whether cache keys include relevant authorization context."],
+["Test resolver side effects and race conditions","Use controlled duplicate requests against test records to assess idempotency, double execution and concurrency safety."],
+["Review observability and safe failures","Confirm security-relevant failures are logged without secrets, query variables are appropriately redacted and alerts exist for abusive query patterns."]
+]]
+],
+payloads:[
+["Introspection: schema names",'{"query":"{ __schema { types { name } } }"}'],
+["Introspection: query and mutation roots",'{"query":"{ __schema { queryType { name } mutationType { name } } }"}'],
+["Inspect a known type",'{"query":"{ __type(name:\\"User\\") { name fields { name } } }"}'],
+["Typename meta-field",'{"query":"{ __typename }"}'],
+["Basic operation with variable",'{"query":"query GetUser($id: ID!) { user(id: $id) { id name } }","variables":{"id":"TEST_USER_ID"}}'],
+["Alias behavior (low volume)",'{"query":"{ first: __typename second: __typename }"}'],
+["Pagination boundary",'{"query":"query { items(first: 1) { edges { node { id } } } }"}'],
+["Invalid field error behavior",'{"query":"{ definitelyNotAField }"}']
+],
+scenarios:[
+["Schema exposure","Compare introspection behavior with no session, a normal user and an administrator. Record whether schema access is intentionally public."],
+["BOLA","Create two test users and records. Authenticate as user A, request user B's object ID, then compare direct and nested resolver behavior."],
+["Field authorization","Request a sensitive field by name and through nested relationships. Verify the API denies it rather than relying on frontend hiding."],
+["Resource controls","Increase query depth, alias count and page size gradually in staging. Stop at the agreed threshold and capture throttling / rejection evidence."]
+],
+notes:"Send requests through Burp Repeater with the real endpoint, required headers and a valid session. Change one variable at a time. InQL helps enumerate a schema when introspection is accessible; it cannot magically retrieve a complete schema when introspection is blocked. If blocked, build an operation inventory from captured traffic, client code and authorized documentation. Never interpret one generic error as conclusive proof that introspection is disabled."
+},
+{
+id:"api",name:"API Security",intro:"Test REST and service APIs across discovery, authentication, authorization, input handling, data exposure, business logic and operational controls.",term:"BOLA (Broken Object Level Authorization) occurs when an API accepts an object identifier but fails to verify that the caller is allowed to access that specific object.",
+sections:[
+["Beginner · Mapping",[
+["Inventory API hosts and versions","Identify base URLs, version prefixes, environments and deprecated endpoints from traffic, docs and client code."],
+["Map methods and routes","Record GET, POST, PUT, PATCH and DELETE routes, parameters, content types and response codes."],
+["Identify data flows","Map sensitive objects, trust boundaries, user roles and integrations. Note which fields are client-controlled."],
+["Review documentation and schemas","Compare OpenAPI/Swagger documentation with observed endpoints and identify undocumented or legacy routes."],
+["Check HTTP method handling","Try unsupported methods and method overrides. Confirm that authorization applies consistently to every accepted method."]
+]],
+["Intermediate · Identity and access",[
+["Test authentication enforcement","Try missing, malformed, expired, revoked and altered credentials on protected endpoints."],
+["Test BOLA / IDOR","Change resource IDs, account IDs, tenant IDs and nested references using controlled test accounts."],
+["Test function-level authorization","Call administrative and privileged endpoints as a normal user."],
+["Test property-level authorization","Try reading or modifying fields that should be restricted, including role, owner, status and price."],
+["Test tenant isolation","Use two test tenants and verify that list, search, export, download and detail endpoints do not cross tenant boundaries."]
+]],
+["Advanced · Input, data and protocol",[
+["Test injection points","Assess query, path, header and body inputs for SQL/NoSQL, LDAP, OS command and template injection where relevant."],
+["Test mass assignment","Add unexpected writable properties to JSON bodies and compare persisted values."],
+["Test excessive data exposure","Check whether APIs return more fields or records than the client needs."],
+["Test pagination and filtering","Check maximum limits, negative values, filter bypasses, sorting and expensive wildcard searches."],
+["Test CORS","Validate allowed origins, credentials, preflight behavior and wildcard combinations."],
+["Test content-type confusion","Try supported and unsupported content types; verify consistent parsing and rejection of ambiguous input."]
+]],
+["Expert · Business logic and operations",[
+["Test rate limits and quotas","Assess per-IP, per-user, per-token and per-operation limits; check whether limits can be bypassed through alternate routes."],
+["Test replay and idempotency","Replay sensitive requests and test idempotency keys for payments, provisioning and state-changing operations."],
+["Test race conditions","Use controlled parallel requests against test data to identify double-spend, duplicate creation or state inconsistencies."],
+["Test SSRF through integrations","Review URL fetchers, webhook testers, importers and document converters for server-side requests to untrusted destinations."],
+["Test cache and proxy behavior","Check cache keys, authorization-aware caching, request smuggling exposure and sensitive response caching."],
+["Review errors, logging and inventory lifecycle","Check error leakage, audit logs, monitoring, undocumented APIs and removal of obsolete versions."]
+]]
+],
+payloads:[
+["Baseline JSON",'{"name":"test","description":"authorized-test"}'],
+["Unexpected property",'{"name":"test","role":"user"}'],
+["Boundary integer",'{"page":0,"limit":1}'],
+["Oversized page (staging only)",'{"page":1,"limit":100000}'],
+["Unknown property",'{"unexpectedTestField":"value"}'],
+["Null / type validation",'{"quantity":null,"enabled":"not-a-boolean"}'],
+["Identifier substitution","GET /api/v1/users/OTHER_TEST_USER_ID"],
+["Method variation","OPTIONS /api/v1/example  (then compare with documented methods)"]
+],
+scenarios:[
+["Two-account authorization matrix","Create two users and compare access to each other's objects across list, detail, update, delete and export endpoints."],
+["Role matrix","Replay the same endpoint as anonymous, standard, support and administrator roles. Record expected and actual permission."],
+["Mass assignment","Submit a normal update plus one restricted property, then read the object back to see whether the restricted field changed."],
+["API inventory drift","Compare documentation, gateway routes and observed traffic to locate undocumented or obsolete endpoints."]
+],
+notes:"Use a route-by-route matrix: endpoint, method, auth required, role, object owner, writable fields, rate limit and expected response. Prefer test accounts and non-production records."
+},
+{
+id:"sqli",name:"SQL Injection",intro:"Assess whether untrusted input changes the structure or meaning of a database query. Confirm safely and identify the affected data operation.",term:"A parameterized query binds data separately from SQL syntax. Escaping alone is database- and context-dependent and is not a substitute for parameterization.",
+sections:[
+["Beginner · Identify input surfaces",[
+["Map database-backed inputs","Review login, search, filters, sort keys, IDs, reports and export functions. Include query parameters, JSON, form fields and headers."],
+["Establish a baseline","Capture a normal request and record status, response length, timing and application behavior."],
+["Test quote handling","Use a single quote and other harmless delimiters to look for unhandled errors or response changes."],
+["Compare data types","Try expected and unexpected numeric, string, null and array values. Check whether validation occurs before query execution."],
+["Review error disclosure","Look for SQL syntax, database names, table names, driver messages and stack traces."]
+]],
+["Intermediate · Confirm behavior",[
+["Test boolean condition differences","In a controlled test, compare logically true and false conditions and look for repeatable response differences."],
+["Test numeric and string contexts","Assess inputs likely concatenated into numeric, quoted-string or identifier positions."],
+["Test search and filter operators","Review wildcard, sort, order, column and filter parameters; identifiers often need strict allow-lists."],
+["Test JSON and nested inputs","Check whether nested objects or arrays are converted into query operators or raw fragments."],
+["Test second-order behavior","Check whether stored input later reaches a query in reports, exports, profile views or background jobs."]
+]],
+["Advanced · Impact and variants",[
+["Assess UNION-style behavior safely","Only in an authorized lab or controlled test data, determine whether query structure can be altered to combine results."],
+["Assess time-based behavior cautiously","Use minimal, bounded delays only where explicitly authorized; avoid repeated delay probes on production."],
+["Review blind injection signals","Use repeatable boolean or timing differences and rule out caching, network jitter and application variability."],
+["Check ORM / query-builder usage","Review whether raw-query escape hatches, dynamic identifiers or unsafe fragments are used."],
+["Check stored procedures and alternate backends","Assess dynamic SQL inside procedures and injection in database-specific query languages."],
+["Validate impact without extraction","Demonstrate control over query logic using a harmless condition; do not dump real user data."]
+]],
+["Expert · Root cause and remediation",[
+["Trace source to sink","Identify the exact user-controlled source, query construction point and execution API."],
+["Verify parameterization","Confirm values are bound parameters and dynamic identifiers are selected from strict allow-lists."],
+["Check least privilege","Verify the application DB account cannot administer the database or access unrelated schemas."],
+["Review monitoring and regression","Ensure query errors are safely handled, suspicious patterns are logged and regression tests cover the vulnerable path."]
+]]
+],
+payloads:[
+["Quote handling","'"],
+["Escaped quote comparison","''"],
+["Boolean probe (string context)","' AND '1'='1"],
+["Boolean contrast (string context)","' AND '1'='2"],
+["Numeric boolean probe","1 AND 1=1"],
+["Numeric false comparison","1 AND 1=2"],
+["Comment handling probe","' /* test */ "],
+["Wildcard search input","%"],
+["Unexpected sort key","?sort=KNOWN_FIELD"],
+["Null input","null"],
+["Array type probe",'{"id":["1","2"]}'],
+["Boundary value","2147483647"]
+],
+scenarios:[
+["Response comparison","Send baseline, true-condition and false-condition requests. Compare stable response properties, not just one status code."],
+["Error-based signal","Use harmless malformed input and inspect whether the application leaks database or driver details."],
+["Second-order path","Store a harmless marker in a profile field, then exercise reports/search/background features that may reuse it in SQL."],
+["ORM review","Inspect source or logs for raw SQL concatenation, dynamic ORDER BY and untrusted column/table names."]
+],
+notes:"These are non-destructive probes, not universal exploit strings. SQL syntax varies by database and query context. Do not use data-dumping, destructive statements or automated exploitation against production without explicit scope and approval."
+},
+{
+id:"xss",name:"Cross-Site Scripting (XSS)",intro:"Determine whether attacker-controlled content can execute as script in another user's browser. Test reflected, stored and DOM-based paths and the output context.",term:"Context matters: HTML text, attributes, JavaScript strings, URLs and CSS each require different encoding. A string that is safe in one context may be executable in another.",
+sections:[
+["Beginner · Find sources and sinks",[
+["Map user-controlled sources","Review query strings, fragments, form fields, headers, postMessage, storage, API responses and uploaded content."],
+["Identify rendering sinks","Look for innerHTML, outerHTML, insertAdjacentHTML, document.write, unsafe template rendering and jQuery HTML insertion."],
+["Establish reflection","Insert a unique harmless marker and determine where it appears in the response or DOM."],
+["Determine output context","Classify reflection as HTML text, attribute, JavaScript, URL, CSS or DOM insertion."],
+["Check encoding behavior","Try harmless angle brackets, quotes and ampersands to see whether context-appropriate encoding is applied."]
+]],
+["Intermediate · Reflected and stored XSS",[
+["Test reflected XSS locations","Test query, path, body and header-controlled values that are reflected into HTML or scripts."],
+["Test stored XSS","Submit a marker through profile, comment, ticket, message or upload metadata and inspect all views where it is displayed."],
+["Test stored audience and persistence","Check whether content executes for the author, other users, administrators, exports or notifications."],
+["Test attribute contexts","Check quoted and unquoted attributes, event-handler attributes and attributes that accept URLs."],
+["Test JavaScript contexts","Check values embedded in script blocks, JSON-to-script templates and inline event handlers."],
+["Test URL contexts","Review href, src, action and redirect-related values for unsafe schemes and missing validation."]
+]],
+["Advanced · DOM and browser contexts",[
+["Trace DOM source-to-sink flow","Follow location, referrer, postMessage, storage and API data into DOM sinks. Confirm sanitization or safe text APIs."],
+["Test fragment-based DOM XSS","Change URL fragments and inspect client-side code that reads location.hash."],
+["Test postMessage handling","Verify sender origin, message schema and data validation before message content reaches DOM or navigation sinks."],
+["Test SVG / MathML / namespace handling","Check whether uploaded or embedded markup is sanitized safely across browser parsing contexts."],
+["Test sanitizer robustness","Review sanitizer configuration, allowed tags/attributes, URL protocol filtering and mutation-XSS considerations."],
+["Test CSP as defense in depth","Review script-src, nonce/hash use, unsafe-inline/eval, report-only mode and whether CSP meaningfully limits execution."]
+]],
+["Expert · Impact and remediation verification",[
+["Assess session exposure safely","Determine what an executing script could access; verify HttpOnly, SameSite and secure cookie settings without stealing real sessions."],
+["Check framework auto-escaping","Verify templates use context-aware escaping and unsafe bypass APIs are absent or tightly controlled."],
+["Check sanitization lifecycle","Verify content is sanitized at the trust boundary and safely encoded at each output context."],
+["Retest all rendering paths","Confirm remediation works in list, detail, admin, mobile, export and notification views."]
+]]
+],
+payloads:[
+["HTML text marker","<xss-test>marker</xss-test>"],
+["Basic tag parsing probe","<img src=x>"],
+["Quoted attribute probe",'" onpointerenter="console.log(1)'],
+["Single-quote attribute probe","' data-x='test"],
+["Event handler probe (local test)","<img src=x onerror=console.log(1)>"],
+["SVG event probe (local test)","<svg onload=console.log(1)>"],
+["Body event probe (local test)","<body onpageshow=console.log(1)>"],
+["Details toggle probe","<details open ontoggle=console.log(1)>"],
+["HTML entity handling","&lt;script&gt;marker&lt;/script&gt;"],
+["Mixed-case parsing probe","<ImG sRc=x OnErRoR=console.log(1)>"],
+["JavaScript string delimiter","'; console.log(1); //"],
+["Template literal delimiter","${console.log(1)}"],
+["URL scheme validation","javascript:console.log(1)"],
+["Data URL handling (review only)","data:text/html,\x3cscript>console.log(1)\x3c/script>"],
+["SVG namespace probe","<svg><a href=#>marker</a></svg>"],
+["Malformed tag parsing","\x3cscr\x3cscript>ipt>marker</scr\x3c/script>ipt>"],
+["Comment boundary probe","<!-- marker -->"],
+["Encoded angle brackets","%3Cimg%20src%3Dx%20onerror%3Dconsole.log(1)%3E"],
+["Double-encoded marker","%253Cimg%253E"],
+["postMessage source marker",'{"type":"test","value":"<xss-test>marker</xss-test>"}'],
+["DOM fragment marker","#<xss-test>marker</xss-test>"],
+["Attribute URL marker",'"><xss-test>marker</xss-test>'],
+["CSS context marker","</style><xss-test>marker</xss-test>"],
+["HTML text context marker","<b>appsec-marker</b>"],
+["JSON reflection marker",'{"probe":"<xss-test>marker</xss-test>"}']
+],
+scenarios:[
+["Reflected XSS","Place a unique marker in each input. Find it in the response and inspect the browser DOM to identify the exact context and encoding."],
+["Stored XSS","Submit a harmless marker to a test account. Check author view, another user's view, administrator view and any notification or export."],
+["DOM XSS","Use browser developer tools to trace location.search/hash, postMessage or storage into DOM APIs. Verify whether the flow reaches an HTML-parsing sink."],
+["CSP review","Inspect response CSP and browser console. Treat CSP as defense in depth, not a replacement for safe rendering."]
+],
+notes:"Payloads use console.log(1) rather than stealing cookies, exfiltrating data or executing destructive actions. Test only in an authorized browser and use a controlled test account. A payload appearing in a response is not enough: prove that it reaches an executable browser context."
+},
+{
+id:"csrf",name:"Cross-Site Request Forgery (CSRF)",intro:"Check whether a victim's authenticated browser can be induced to perform an unwanted state-changing action against the application.",term:"CSRF is most relevant when browsers automatically attach credentials such as session cookies. Bearer tokens manually added by JavaScript are generally not automatically sent cross-site, but design details still matter.",
+sections:[
+["Beginner · Identify conditions",[
+["Identify state-changing actions","List profile changes, password/email updates, payments, transfers, role changes and account actions."],
+["Identify credential transport","Determine whether authentication relies on cookies, browser credentials, client certificates or manually attached bearer tokens."],
+["Check SameSite cookie attributes","Review SameSite, Secure, HttpOnly and cookie scope. SameSite is a mitigation, not the only control."],
+["Check anti-CSRF tokens","Look for unpredictable tokens bound to the user session and validated on every state-changing request."],
+["Check safe HTTP methods","Verify GET and HEAD do not change application state."]
+]],
+["Intermediate · Request validation",[
+["Test token absence","Remove the CSRF token from a test request and confirm the operation is rejected."],
+["Test token tampering","Modify, reuse or substitute a token from another session and verify rejection."],
+["Test Origin validation","Check whether state-changing requests validate Origin and, where appropriate, Referer."],
+["Test content-type enforcement","Check whether simple cross-origin content types are accepted where JSON is expected."],
+["Test CORS interaction","Review whether credentialed cross-origin requests are allowed to attacker-controlled origins."]
+]],
+["Advanced · Edge cases",[
+["Test login CSRF","Check whether an attacker can cause a victim browser to log into an attacker-controlled account."],
+["Test multi-step workflows","Verify every step of sensitive workflows has CSRF protection, not just the final confirmation."],
+["Test subdomain trust","Assess whether sibling subdomains or overly broad cookie domains weaken origin assumptions."],
+["Test logout and session changes","Verify logout, email change and password change cannot be triggered cross-site without appropriate protections."]
+]],
+["Expert · Verification",[
+["Test browser behavior","Validate SameSite behavior in supported browsers and consider redirects, embedded contexts and legacy clients."],
+["Verify framework middleware","Confirm CSRF middleware covers all relevant routes and is not bypassed by API or alternate content-type paths."],
+["Document exploit prerequisites","Record victim authentication state, browser assumptions, required interaction and actual business impact."]
+]]
+],
+payloads:[
+["Cross-site form concept",'<!-- In a controlled test page: POST a form to the authorized test endpoint with test values. -->'],
+["Missing token test","Replay the state-changing request with the CSRF token removed."],
+["Modified token test","Replay with a random token value."],
+["Reused token test","Replay a previously used token where one-time use is expected."],
+["Origin test","Send the request with Origin: https://attacker.invalid"],
+["Referer test","Send the request with Referer: https://attacker.invalid/test"],
+["Content-type variation","Compare application/json with application/x-www-form-urlencoded where supported."],
+["GET state-change check","Attempt the same action with GET only using a harmless test change."]
+],
+scenarios:[
+["Token enforcement","Use Burp Repeater to remove, alter and swap CSRF tokens between two test sessions."],
+["Cookie-based attack surface","Check whether the browser automatically attaches session cookies to a cross-site request."],
+["CORS and CSRF","Verify allowed origins and credential handling. CORS alone is not a CSRF defense."],
+["Workflow coverage","Test each state-changing step, including confirmation and alternate API routes."]
+],
+notes:"Do not trigger payments, account deletion or irreversible actions. Use a dedicated test account and reversible low-impact changes. Capture cookie attributes and the exact request that succeeds or fails."
+},
+{
+id:"ssrf",name:"Server-Side Request Forgery (SSRF)",intro:"Assess server-side features that fetch URLs or access remote resources, and determine whether user input can influence the destination.",term:"SSRF happens when a server makes a request to a destination influenced by a user. The core issue is server-side reachability and trust, not merely accepting a URL.",
+sections:[
+["Beginner · Find URL fetchers",[
+["Identify URL-taking features","Review import-by-URL, webhook testers, PDF renderers, image fetchers, link previews, callbacks and integrations."],
+["Map URL input locations","Check JSON, form fields, query parameters, headers and nested configuration values."],
+["Establish outbound behavior","Use an approved external callback domain or internal test listener to determine whether the server makes a request."],
+["Identify redirect handling","Check whether the fetcher follows redirects and whether destination validation is repeated after each redirect."],
+["Review response visibility","Determine whether fetched response bodies, headers, status or timing are returned to the user."]
+]],
+["Intermediate · Destination validation",[
+["Test scheme restrictions","Verify only required schemes (typically HTTPS) are accepted; reject file, gopher and other unnecessary schemes."],
+["Test hostname allow-lists","Check exact host matching, suffix confusion, userinfo syntax and trailing-dot handling."],
+["Test IP literal handling","Check IPv4, IPv6 and alternate IP representations against a controlled test policy."],
+["Test DNS resolution and rebinding defenses","Verify validation is performed against resolved addresses and connections are pinned or revalidated appropriately."],
+["Test redirects and DNS changes","Ensure redirect targets and re-resolved destinations cannot escape the allowed destination policy."],
+["Test port restrictions","Restrict outbound ports to those required by the business function."]
+]],
+["Advanced · Network boundaries",[
+["Assess private and link-local reachability safely","Use an approved internal test service; do not probe production metadata or sensitive internal services without explicit authorization."],
+["Review proxy and egress controls","Confirm network-level controls prevent access to internal, loopback, link-local and management networks."],
+["Check parser inconsistencies","Compare URL parsing between validation library, HTTP client, proxy and DNS resolver."],
+["Check response and size limits","Enforce timeouts, maximum response size, content-type restrictions and redirect limits."],
+["Check protocol and file handling","Verify fetched content cannot trigger unsafe local file access, parser exploits or unintended protocol handlers."]
+]],
+["Expert · Architecture and remediation",[
+["Trace URL to network sink","Identify the exact code path, HTTP client, DNS resolution and proxy behavior."],
+["Enforce destination policy at connection time","Use strict allow-lists and validate the final resolved IP at connection time, including redirects."],
+["Apply least-privilege network egress","Block unnecessary internal ranges and sensitive services at the network layer."],
+["Retest bypass classes","Retest alternate encodings, redirects, IPv6, DNS behavior and parser discrepancies after remediation."]
+]]
+],
+payloads:[
+["Approved callback URL","https://YOUR-CONTROLLED-CALLBACK.example/ssrf-test"],
+["Loopback test string (lab only)","http://127.0.0.1/"],
+["Private IPv4 test string (lab only)","http://10.0.0.1/"],
+["Link-local test string (lab only)","http://169.254.1.1/"],
+["IPv6 loopback test string (lab only)","http://[::1]/"],
+["Unexpected scheme validation","file:///etc/hosts"],
+["Redirect test","https://YOUR-CONTROLLED-CALLBACK.example/redirect-to-test-target"],
+["Userinfo parser case","https://allowed.example@blocked.example/"],
+["Trailing-dot hostname case","https://allowed.example./"],
+["Nonstandard port case","https://YOUR-CONTROLLED-CALLBACK.example:8443/"]
+],
+scenarios:[
+["Out-of-band confirmation","Use a callback service you control. Correlate DNS and HTTP interactions with a unique request token."],
+["Redirect validation","Make a controlled endpoint issue a redirect and verify the application validates the final destination."],
+["DNS resolution","Test whether validation and connection use the same resolved destination; coordinate with the network team."],
+["Response handling","Check whether large, slow or unexpected content types are safely rejected."]
+],
+notes:"Do not use cloud metadata endpoints, internal admin panels or production private addresses as casual probes. Only test destinations explicitly included in scope. Prefer a controlled callback domain and staging network."
+},
+{
+id:"cmd",name:"Command Injection",intro:"Check whether user input is incorporated into operating-system commands or shell interpreters without safe argument handling.",term:"The safest design is to avoid shell execution. If an OS process is required, use a fixed executable, structured argument arrays, strict validation and least privilege.",
+sections:[
+["Beginner · Identify command surfaces",[
+["Find OS-backed features","Review ping, traceroute, diagnostics, archive extraction, file conversion, image processing and system administration features."],
+["Map user-controlled arguments","Identify values that may reach executable names, flags, file paths or command arguments."],
+["Review process APIs","Look for shell-enabled process execution, command concatenation and unsafe wrappers in source code."],
+["Establish safe baseline","Use harmless input and capture normal output, status and timing."],
+["Check error handling","Look for shell errors, executable paths, environment details and command output leakage."]
+]],
+["Intermediate · Safe validation",[
+["Test metacharacter handling in a lab","Use harmless separators and benign commands only in an isolated authorized environment."],
+["Test argument injection","Check whether input can introduce unexpected flags or change the meaning of a fixed command."],
+["Test whitespace and quoting","Assess spaces, quotes, tabs and encoding behavior across platform-specific command parsing."],
+["Test path and filename inputs","Check whether filenames beginning with a dash or containing separators alter process behavior."],
+["Check OS differences","Assess Windows and Unix execution paths separately; escaping rules are not interchangeable."]
+]],
+["Advanced · Blind and indirect paths",[
+["Assess blind execution safely","Use a controlled local marker or approved callback in a lab; avoid arbitrary external commands."],
+["Check asynchronous workers","Review queues, scheduled jobs and background processors that may execute commands later."],
+["Check archive and document tools","Assess wrappers around unzip, converters, media tools and other binaries for argument injection."],
+["Review environment inheritance","Check PATH, environment variables, working directory and temporary file permissions."]
+]],
+["Expert · Root cause",[
+["Trace source to process sink","Document user-controlled data flow to the process API and whether a shell is invoked."],
+["Verify structured arguments","Confirm executable and arguments are passed separately with shell execution disabled."],
+["Constrain executable and privileges","Use absolute executable paths, fixed argument allow-lists, restricted OS accounts and sandboxing."],
+["Retest platform-specific cases","Verify the fix on each supported OS and execution path."]
+]]
+],
+payloads:[
+["Metacharacter handling marker","test;marker"],
+["Pipe handling marker","test|marker"],
+["Command substitution marker","$(marker)"],
+["Backtick parsing marker","`marker`"],
+["Ampersand handling marker","test&&marker"],
+["Newline handling marker","test%0amarker"],
+["Quote handling marker",'"test"'],
+["Leading dash filename","-test-option"],
+["Path separator handling","../appsec-test"],
+["Windows separator marker","test&rem marker"]
+],
+scenarios:[
+["Source-to-sink review","Trace input to Runtime.exec, ProcessBuilder, child_process or equivalent. Check whether shell parsing is enabled."],
+["Argument injection","Use a harmless option-like filename or argument in a test harness to see whether the tool interprets it as a flag."],
+["Background processing","Submit a harmless marker through an asynchronous feature and inspect worker logs."],
+["Privilege boundary","Verify the process runs with minimal permissions and cannot access unrelated files or secrets."]
+],
+notes:"Payload strings are parsing probes, not commands to execute. Do not run destructive commands, reverse shells, persistence commands or data-exfiltration tests. Use a local lab or controlled test harness."
+},
+{
+id:"codeinj",name:"Code Injection",intro:"Determine whether untrusted input is evaluated as code by an interpreter, expression engine, dynamic compiler or runtime evaluator.",term:"Code injection differs from command injection: the input is evaluated by an application language or expression interpreter rather than necessarily by an OS shell.",
+sections:[
+["Beginner · Locate evaluators",[
+["Identify dynamic evaluation features","Review expression builders, formula fields, scripting plugins, template engines, rule engines and dynamic code execution."],
+["Search for risky APIs","Look for eval, Function constructors, reflection, dynamic compilation and unsafe deserialization hooks."],
+["Map trust boundaries","Determine whether input comes from users, imports, integrations, admin configuration or stored records."],
+["Establish expected grammar","Document which expressions or formulas are legitimately supported and what operations should be allowed."],
+["Check error disclosure","Look for parser, compiler, runtime and source-location details."]
+]],
+["Intermediate · Validate isolation",[
+["Test harmless expression evaluation","Use arithmetic or string expressions in a dedicated test environment to determine whether input is evaluated."],
+["Test scope access","Check whether expressions can access variables, objects, environment or application context beyond the intended scope."],
+["Test function access","Determine whether unexpected functions, reflection or object methods are reachable."],
+["Test sandbox escape boundaries","Review class loading, imports, prototype access and host-object exposure where relevant."],
+["Test stored expression execution","Check whether saved formulas or rules execute later under a more privileged service account."]
+]],
+["Advanced · Runtime and platform",[
+["Review language-specific evaluators","Assess JavaScript, Java expression languages, Python, PHP and other runtime-specific evaluation paths."],
+["Test resource exhaustion controls","Check execution timeouts, memory limits, recursion limits and cancellation."],
+["Review plugin boundaries","Check whether plugins or extensions execute with broader privileges than the user configuring them."],
+["Review deserialization adjacency","Check whether object construction or deserialization can reach dangerous execution hooks."]
+]],
+["Expert · Remediation",[
+["Replace evaluation with a safe parser","Use a restricted grammar or purpose-built expression parser rather than general-purpose eval."],
+["Constrain execution context","Expose only approved data and functions; isolate execution from secrets and host capabilities."],
+["Apply resource and privilege limits","Use process isolation, timeouts, memory caps and least privilege."],
+["Add negative regression tests","Test blocked syntax, unexpected functions, scope access and resource limits."]
+]]
+],
+payloads:[
+["Arithmetic evaluation probe","1+1"],
+["String expression probe",'"appsec-test"'],
+["Unexpected function name","unknownFunction()"],
+["Property access probe","test.property"],
+["Array index probe","items[0]"],
+["Nested expression probe","(1+2)*3"],
+["Template expression marker","{{ 7 * 7 }}"],
+["Expression delimiter marker","${7*7}"]
+],
+scenarios:[
+["Expression-vs-literal check","Submit a harmless arithmetic expression and compare whether the application returns the expression text or its evaluated result."],
+["Scope boundary","In a test harness, check whether only explicitly exposed variables and functions are available."],
+["Stored rule execution","Create a benign saved expression and observe which service identity executes it."],
+["Resource controls","Use bounded recursion or long expressions only in an isolated environment with strict timeouts."]
+],
+notes:"Do not attempt to read environment secrets, access host files, spawn processes or escape a production sandbox. Confirm evaluation with harmless arithmetic or string markers."
+},
+{
+id:"smuggling",name:"HTTP Request Smuggling",intro:"Assess disagreement between front-end and back-end HTTP message parsing, especially request body framing and connection reuse.",term:"Request smuggling commonly arises when two HTTP hops disagree about message boundaries, such as conflicting Content-Length and Transfer-Encoding handling. Testing can disrupt shared connections.",
+sections:[
+["Beginner · Architecture",[
+["Map HTTP chain","Identify CDN, WAF, load balancer, reverse proxy, gateway and origin server hops."],
+["Identify protocol versions","Record HTTP/1.1, HTTP/2 and HTTP/3 support and downgrade points."],
+["Review connection reuse","Understand whether front-end and back-end connections are pooled or shared."],
+["Capture baseline framing","Record normal Content-Length, Transfer-Encoding and body handling."],
+["Check intermediary normalization","Determine which layer rewrites headers, rejects ambiguity or translates HTTP/2 to HTTP/1.1."]
+]],
+["Intermediate · Controlled parser checks",[
+["Review duplicate Content-Length handling","Verify conflicting or repeated lengths are rejected consistently."],
+["Review Transfer-Encoding handling","Check whether unsupported, duplicated or malformed transfer codings are rejected."],
+["Check CL/TE ambiguity in staging","Only use a dedicated isolated test environment because malformed framing can affect other users."],
+["Check whitespace and header normalization","Review unusual whitespace, casing, duplicate headers and invalid line endings."],
+["Check HTTP/2 downgrade behavior","Assess how pseudo-headers and body framing are translated to HTTP/1.1."]
+]],
+["Advanced · Impact and edge cases",[
+["Assess desynchronization in isolation","Use a dedicated backend or test host and verify request boundaries without targeting shared production pools."],
+["Check response queue alignment","Determine whether responses can become associated with the wrong request."],
+["Review cache interaction","Assess whether desynchronization can affect cache keys or poison shared responses."],
+["Check request timeout and connection close","Verify malformed requests cause safe connection termination and do not leave ambiguous state."]
+]],
+["Expert · Remediation",[
+["Enforce one framing interpretation","Reject ambiguous messages at the edge and normalize before forwarding."],
+["Patch and align intermediaries","Keep proxy, gateway and origin software current and consistently configured."],
+["Disable unsafe protocol downgrades","Avoid inconsistent HTTP/2-to-HTTP/1 translation and test every hop."],
+["Retest with vendor guidance","Use approved tools and isolated infrastructure; confirm no cross-request desynchronization."]
+]]
+],
+payloads:[
+["Header inventory","Content-Length: 0"],
+["Duplicate header review","Content-Length: 0\\r\\nContent-Length: 0"],
+["Transfer-Encoding review","Transfer-Encoding: chunked"],
+["Protocol comparison","Compare HTTP/1.1 request handling with HTTP/2 handling"],
+["Malformed framing review","Use vendor-approved test cases only in an isolated lab"]
+],
+scenarios:[
+["Proxy chain map","Document every intermediary and its HTTP version, parser behavior and connection pooling."],
+["Staging-only parser test","Use a dedicated backend with no shared users; stop immediately if response alignment changes."],
+["Normalization review","Compare raw client request, edge-forwarded request and origin-observed request."],
+["Cache adjacency","Assess cache behavior only after framing is safely understood."]
+],
+notes:"High-risk testing. Do not send ambiguous CL/TE payloads to shared production systems: desynchronization can affect unrelated users. Use a dedicated lab/backend, coordinate with infrastructure owners and follow current vendor test guidance."
+},
+{
+id:"xxe",name:"XML External Entity (XXE)",intro:"Check whether XML parsers process attacker-controlled external entities, DTDs or external resources.",term:"An XML external entity is a named entity whose value is loaded from an external resource. Secure parser configuration disables unsafe external entity resolution and unnecessary DTD processing.",
+sections:[
+["Beginner · Find XML parsers",[
+["Identify XML input points","Review SOAP, SAML, SVG, office document imports, feeds and XML upload endpoints."],
+["Confirm parser behavior","Send a valid benign XML document and identify whether the endpoint parses it."],
+["Check DTD acceptance","Determine whether document type declarations are accepted."],
+["Review parser errors","Look for parser versions, file paths, entity errors and internal implementation details."],
+["Check content-type variations","Review application/xml, text/xml and multipart upload handling."]
+]],
+["Intermediate · Entity controls",[
+["Test external entity restrictions","Use a controlled external callback in an authorized lab to determine whether external entities are resolved."],
+["Test parameter entity handling","Review whether parameter entities and external DTD references are disabled."],
+["Test local resource protection","Verify parser cannot read local files or access internal services; use a lab-only marker file."],
+["Test entity expansion limits","Check entity expansion, nesting and document size limits without resource exhaustion."],
+["Test alternate XML pathways","Check SVG, office documents, SOAP attachments and secondary parser libraries."]
+]],
+["Advanced · Parser and transformation paths",[
+["Review XInclude","Check whether XInclude is enabled and can load external resources."],
+["Review XSLT processing","Check whether stylesheets can access external documents or extension functions."],
+["Check decompression and archive paths","Review XML inside ZIP, DOCX, XLSX and other containers."],
+["Check asynchronous processing","Verify queued import jobs use the same secure parser configuration."]
+]],
+["Expert · Remediation",[
+["Disable DTDs and external entities","Configure parser libraries to disallow DOCTYPE and external general/parameter entities where not required."],
+["Disable external access","Restrict external DTD, schema and stylesheet access at the parser and network layers."],
+["Apply expansion and size limits","Set safe limits for entity expansion, nesting, document size and processing time."],
+["Retest all parser instances","Verify every library, service, file import and transformation path uses secure settings."]
+]]
+],
+payloads:[
+["Basic XML baseline",'<?xml version="1.0"?><root>appsec-test</root>'],
+["DOCTYPE acceptance probe",'<?xml version="1.0"?><!DOCTYPE root><root>test</root>'],
+["External callback template (controlled lab)",'<!DOCTYPE root [<!ENTITY x SYSTEM "https://YOUR-CONTROLLED-CALLBACK.example/xxe">]><root>&x;</root>'],
+["External DTD template (controlled lab)",'<!DOCTYPE root SYSTEM "https://YOUR-CONTROLLED-CALLBACK.example/test.dtd"><root>test</root>'],
+["XInclude marker (lab only)",'<root xmlns:xi="http://www.w3.org/2001/XInclude"><xi:include href="https://YOUR-CONTROLLED-CALLBACK.example/x" parse="text"/></root>']
+],
+scenarios:[
+["Parser acceptance","Compare a normal XML document with a document containing a DOCTYPE declaration."],
+["Out-of-band resolution","Use a controlled callback domain and unique token; check whether the parser makes an external request."],
+["File import coverage","Inspect XML in SVG and office document uploads, not only direct XML API endpoints."],
+["Safe parser configuration","Verify DTD and external access settings in every parser library."]
+],
+notes:"Do not target /etc/passwd, cloud metadata or internal services. Use controlled callback infrastructure and a lab-only marker file. Avoid entity-expansion bombs and other availability-impacting payloads."
+},
+{
+id:"ssti",name:"SSTI & CSTI",intro:"Assess server-side template injection and client-side template injection where untrusted input is interpreted as template syntax or expressions.",term:"SSTI executes in a server-side template engine context. CSTI occurs when client-side frameworks or template compilers interpret attacker-controlled content as template expressions.",
+sections:[
+["Beginner · Identify template contexts",[
+["Find template-driven features","Review email previews, document generation, reports, CMS content, custom messages and theme editors."],
+["Insert harmless markers","Use a unique text marker and locate it in rendered output."],
+["Test expression evaluation","Try simple arithmetic expressions and check whether the result is evaluated or displayed literally."],
+["Identify engine and context","Use safe error behavior and application stack details to infer template engine and whether the value is in text, attribute or code context."],
+["Separate server and client rendering","Compare raw HTTP response with the browser-rendered DOM."]
+]],
+["Intermediate · SSTI/CSTI behavior",[
+["Test variable interpolation","Check whether braces, delimiters or expression syntax are evaluated."],
+["Test template context boundaries","Assess HTML text, attributes, JavaScript and nested template contexts."],
+["Test client-side compilation","Review AngularJS-style or other client template compilation of untrusted content."],
+["Test stored templates","Check whether saved content is rendered later for other users or privileged roles."],
+["Review sandbox settings","Determine whether template engine sandboxing and allowed filters/functions are configured."]
+]],
+["Advanced · Impact and controls",[
+["Review object and function access","In a lab, determine whether the template can access unintended objects or methods without accessing secrets."],
+["Check include/import features","Review template includes, file loaders, macros and dynamic template names."],
+["Check rendering resource limits","Assess recursion, loops, large output and render time limits in staging."],
+["Check escaping and safe-markup bypasses","Review raw/safe filters and framework trust APIs."]
+]],
+["Expert · Remediation",[
+["Avoid compiling untrusted templates","Treat user content as data and render it through fixed, trusted templates."],
+["Use a restricted template environment","Disable dangerous globals, loaders, imports and unsafe functions."],
+["Apply context-aware output encoding","Use framework auto-escaping and avoid raw HTML bypasses."],
+["Retest server and browser paths","Verify both server rendering and client-side compilation no longer evaluate user-controlled expressions."]
+]]
+],
+payloads:[
+["Generic arithmetic marker","{{7*7}}"],
+["Alternate expression marker","${7*7}"],
+["Bracket expression marker","<%= 7*7 %>"],
+["Handlebars-style marker","{{this}}"],
+["Angular-style marker","{{7*7}}"],
+["Freemarker-style marker","${7*7}"],
+["Velocity-style marker","#set($x=7*7)$x"],
+["Jinja-style marker","{{ 7 * 7 }}"],
+["Thymeleaf-style marker","[[${7*7}]]"],
+["Literal control marker","TEMPLATE_TEST_7x7"]
+],
+scenarios:[
+["Evaluation check","Submit a harmless arithmetic marker and check whether the output is 49 or the literal expression."],
+["Server vs browser","Compare raw response source and live DOM to identify where evaluation occurs."],
+["Stored template","Save a benign marker in a test template and inspect later rendering contexts."],
+["Sandbox review","Review available template functions, object exposure and loader configuration."]
+],
+notes:"Use only harmless arithmetic and string markers. Do not attempt file reads, command execution, secret access or sandbox escape on production systems. Engine identification should be based on multiple signals, not one generic expression."
+},
+{
+id:"cookies",name:"Cookies Security",intro:"Review cookie attributes, scope, lifecycle and session handling to reduce theft, cross-site abuse and fixation risks.",term:"HttpOnly prevents JavaScript from reading a cookie; Secure restricts transmission to HTTPS; SameSite controls cross-site cookie sending. These attributes address different risks.",
+sections:[
+["Beginner · Cookie inventory",[
+["Inventory application cookies","Capture cookies across login, logout, authenticated browsing and sensitive workflows."],
+["Check Secure","Verify session and sensitive cookies are sent only over HTTPS."],
+["Check HttpOnly","Verify session identifiers are not readable by JavaScript unless there is a documented need."],
+["Check SameSite","Review Strict, Lax or None based on cross-site workflow requirements; SameSite=None requires Secure."],
+["Check Domain and Path","Avoid unnecessarily broad Domain and Path scopes, especially across subdomains."]
+]],
+["Intermediate · Session lifecycle",[
+["Test session rotation","Verify the session ID changes after login and privilege elevation."],
+["Test logout invalidation","Replay a prior session after logout and verify it is invalidated server-side."],
+["Test expiry and idle timeout","Check absolute and inactivity timeouts and server-side enforcement."],
+["Test password and MFA changes","Verify existing sessions are revoked or appropriately revalidated after sensitive account changes."],
+["Check duplicate cookie ambiguity","Review same-name cookies with different paths/domains and how the server selects them."]
+]],
+["Advanced · Browser and domain risks",[
+["Test subdomain cookie exposure","Assess whether untrusted or less-trusted subdomains can receive or set sensitive cookies."],
+["Review cookie prefixes","Consider __Host- and __Secure- prefixes where supported and appropriate."],
+["Check cookie-based CSRF exposure","Combine SameSite review with anti-CSRF token and Origin validation checks."],
+["Check caching and logging","Ensure Set-Cookie and Cookie values are not exposed in shared caches, logs or analytics."]
+]],
+["Expert · Remediation",[
+["Use opaque session identifiers","Avoid embedding sensitive personal or authorization data in client-readable cookies."],
+["Rotate and revoke sessions","Rotate identifiers after authentication and revoke server-side on logout or risk events."],
+["Set minimal scope and lifetime","Use host-only scope where possible and short, risk-appropriate lifetimes."],
+["Retest browser compatibility","Verify behavior across supported browsers and cross-site authentication flows."]
+]]
+],
+payloads:[
+["Cookie attribute review","Set-Cookie: session=TEST; Secure; HttpOnly; SameSite=Lax"],
+["Missing Secure comparison","Set-Cookie: session=TEST; HttpOnly; SameSite=Lax"],
+["SameSite=None review","Set-Cookie: session=TEST; Secure; HttpOnly; SameSite=None"],
+["Domain scope review","Set-Cookie: session=TEST; Domain=example.com; Secure; HttpOnly"],
+["Path scope review","Set-Cookie: session=TEST; Path=/; Secure; HttpOnly"],
+["Expiry review","Set-Cookie: session=TEST; Max-Age=3600; Secure; HttpOnly; SameSite=Lax"]
+],
+scenarios:[
+["Before/after login","Compare session cookie values before and after login and privilege elevation."],
+["Logout replay","Copy a test session cookie, log out, then replay it to verify server-side revocation."],
+["Subdomain scope","Review whether cookies are shared with all subdomains or only the intended host."],
+["Cross-site flow","Validate SameSite and CSRF behavior in the actual supported login/payment flow."]
+],
+notes:"Never paste real session cookies into reports or shared tools. Redact values and preserve only attributes and safe evidence."
+},
+{
+id:"headers",name:"HTTP Security Headers",intro:"Review response headers that influence browser security, transport protection, content handling and cross-origin isolation.",term:"Security headers are defense-in-depth browser instructions. Their value depends on correct directives and application behavior; merely having a header is not proof of protection.",
+sections:[
+["Beginner · Inventory",[
+["Capture headers across key routes","Review login, authenticated pages, APIs, errors, redirects and static assets."],
+["Check HSTS","Verify Strict-Transport-Security is present on HTTPS responses with an appropriate max-age and carefully considered includeSubDomains/preload."],
+["Check Content Security Policy","Review script-src, object-src, base-uri, frame-ancestors and unsafe-inline/eval usage."],
+["Check X-Content-Type-Options","Verify nosniff is present where appropriate."],
+["Check frame protection","Use CSP frame-ancestors; review legacy X-Frame-Options compatibility."]
+]],
+["Intermediate · Cross-origin policies",[
+["Check Referrer-Policy","Ensure referrer data is not unnecessarily disclosed to third parties."],
+["Check Permissions-Policy","Restrict unnecessary browser capabilities such as camera, microphone and geolocation."],
+["Check CORS response headers","Validate Access-Control-Allow-Origin, credentials, methods and headers."],
+["Check COOP / COEP / CORP","Review cross-origin isolation and resource policies based on application requirements."],
+["Check cache headers","Ensure sensitive authenticated responses are not stored by shared caches."]
+]],
+["Advanced · Consistency and bypasses",[
+["Check redirects and errors","Verify security headers are consistently applied to 3xx, 4xx and 5xx responses."],
+["Check subdomain and proxy behavior","Review headers at CDN, WAF, gateway and origin to identify overrides or duplication."],
+["Review CSP effectiveness","Check nonce/hash deployment, report-only status, wildcard sources and unsafe directives."],
+["Check legacy headers","Do not rely on obsolete headers such as X-XSS-Protection as a substitute for CSP."]
+]],
+["Expert · Remediation",[
+["Set headers centrally and consistently","Apply policies at a trusted edge or framework layer and test all routes."],
+["Tune policies to application behavior","Avoid copy-paste policies that break required integrations or provide false confidence."],
+["Monitor CSP violations","Use reporting carefully, protect endpoints and avoid collecting sensitive URL data."],
+["Retest in real browsers","Confirm the browser enforces the intended policy, not just that the header exists."]
+]]
+],
+payloads:[
+["Inspect headers","curl -sS -D - -o /dev/null https://YOUR-AUTHORIZED-HOST/"],
+["HSTS example","Strict-Transport-Security: max-age=31536000"],
+["CSP example","Content-Security-Policy: default-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"],
+["MIME sniffing protection","X-Content-Type-Options: nosniff"],
+["Referrer policy example","Referrer-Policy: strict-origin-when-cross-origin"],
+["Permissions policy example","Permissions-Policy: camera=(), microphone=(), geolocation=()"],
+["Frame policy example","X-Frame-Options: DENY"]
+],
+scenarios:[
+["Route comparison","Capture headers from home, login, authenticated page, API, redirect and error response."],
+["CSP review","Evaluate each directive against actual script, style, image, frame and connection sources."],
+["CORS review","Test trusted and untrusted Origin values and credential behavior."],
+["Proxy consistency","Compare edge and origin behavior where architecture access is available."]
+],
+notes:"Header recommendations are application-specific. HSTS should be enabled only after HTTPS coverage is confirmed. Avoid blindly adding includeSubDomains or preload if any subdomain still needs HTTP."
+},
+{
+id:"storage",name:"Browser Storage Security",intro:"Review localStorage, sessionStorage, IndexedDB, Cache Storage, service workers and client-side persistence for sensitive data and trust issues.",term:"localStorage and sessionStorage are accessible to same-origin JavaScript. They are not safe places for long-lived secrets when XSS is possible.",
+sections:[
+["Beginner · Inventory storage",[
+["Inspect localStorage","Review keys and values for access tokens, refresh tokens, PII, secrets and authorization state."],
+["Inspect sessionStorage","Check whether sensitive data persists across navigation and tabs."],
+["Inspect IndexedDB","Review object stores, records and retention of sensitive data."],
+["Inspect cookies and Cache Storage","Check cached API responses, offline content and service worker caches."],
+["Inspect browser logs and history","Check whether secrets appear in URLs, console output or client-side telemetry."]
+]],
+["Intermediate · Access and lifecycle",[
+["Test logout cleanup","Verify sensitive client-side data is removed and server-side credentials are revoked."],
+["Test account switching","Switch users in the same browser and check for stale data from the previous account."],
+["Test token storage","Assess exposure of bearer and refresh tokens to XSS and third-party scripts."],
+["Test cache isolation","Check whether cached responses are partitioned by user and cleared on logout."],
+["Review service worker scope","Check registration scope, update behavior and cached route handling."]
+]],
+["Advanced · Trust boundaries",[
+["Test client-side authorization assumptions","Modify local storage values and verify the server does not trust client-side role or entitlement flags."],
+["Review postMessage and storage events","Check origin validation and message schema where storage data crosses contexts."],
+["Review third-party script access","Assess whether analytics or marketing scripts can read sensitive same-origin storage."],
+["Check data retention","Review expiry, deletion, encryption-at-rest expectations and browser profile persistence."]
+]],
+["Expert · Remediation",[
+["Keep secrets out of script-readable storage","Prefer secure, HttpOnly cookies or appropriate token architecture based on threat model."],
+["Treat browser state as untrusted","Enforce authorization and validation server-side."],
+["Minimize cached sensitive data","Use suitable cache controls and clear user-specific state during logout/account changes."],
+["Retest XSS and supply-chain impact","Assess the blast radius of script execution and limit third-party code privileges."]
+]]
+],
+payloads:[
+["Storage inventory (DevTools)","Object.keys(localStorage)"],
+["Session storage inventory","Object.keys(sessionStorage)"],
+["IndexedDB inventory","indexedDB.databases()"],
+["Service worker inventory","navigator.serviceWorker.getRegistrations()"],
+["Cache inventory","caches.keys()"],
+["Client-side trust test","Change a non-sensitive test role flag in DevTools and verify server authorization remains unchanged."]
+],
+scenarios:[
+["Logout and login as another user","Inspect storage before logout, after logout and after signing in as a second test user."],
+["Token exposure review","Determine which scripts execute on the origin and whether they can read stored credentials."],
+["Cache leakage","Check whether one user's cached response can be served to another user on a shared browser profile."],
+["Tamper with client flags","Modify UI-only authorization state and verify server-side access controls still deny restricted actions."]
+],
+notes:"Do not copy real tokens or personal data into evidence. Browser storage inspection is read-only unless you intentionally change a test value; avoid modifying production user state."
+},
+{
+id:"location",name:"Location / URL / Hash Handling",intro:"Review location.search, location.hash, URL parsing, redirects and browser navigation for injection, open redirect and trust-boundary issues.",term:"The URL fragment (window.location.hash) is normally not sent to the server in HTTP requests, but client-side JavaScript can read it and pass it to DOM sinks or routing logic.",
+sections:[
+["Beginner · Map URL inputs",[
+["Inventory URL-controlled sources","Review location.href, search, hash, pathname, document.URL, referrer and URLSearchParams."],
+["Identify navigation sinks","Find assignments to location, location.href, window.open, anchor href and router navigation."],
+["Identify DOM sinks","Check whether URL values reach innerHTML, document.write, jQuery .html() or unsafe template rendering."],
+["Review query and fragment parsing","Check decoding order, duplicate parameters, malformed encoding and parameter pollution."],
+["Check external redirect behavior","Supply an external destination and verify only approved same-origin or allow-listed destinations are accepted."]
+]],
+["Intermediate · Validation and encoding",[
+["Test javascript: and data: schemes","Check whether navigation or resource attributes accept unsafe schemes."],
+["Test protocol-relative URLs","Check values beginning with // and mixed slash/backslash forms."],
+["Test encoded and double-encoded values","Verify canonicalization occurs once and validation is applied to the final parsed URL."],
+["Test host confusion","Review userinfo, suffix matching, ports, trailing dots and Unicode/punycode handling."],
+["Test hash-driven routes","Check whether fragment values influence route selection, content rendering or authorization decisions."]
+]],
+["Advanced · Browser messaging",[
+["Test postMessage origin validation","Verify exact sender origin and expected message schema before processing message data."],
+["Test history API handling","Review pushState/replaceState and popstate handlers for unsafe URL-derived state."],
+["Test client-side router guards","Verify protected routes are also enforced by backend authorization."],
+["Test DOM clobbering and named properties","Review assumptions around DOM elements creating global names or overriding expected properties."]
+]],
+["Expert · Remediation",[
+["Use URL parser APIs","Parse destinations with the URL API and validate protocol, origin, port and path explicitly."],
+["Use safe DOM APIs","Render untrusted values with textContent and safe attribute assignment, not HTML parsing."],
+["Enforce strict navigation allow-lists","Prefer relative paths or exact trusted destinations; avoid substring-based host checks."],
+["Retest all URL entry points","Cover query, hash, referrer, redirects, message events and client routers."]
+]]
+],
+payloads:[
+["Query marker","?next=/account"],
+["Fragment marker","#appsec-test"],
+["External redirect test","?next=https://attacker.invalid/"],
+["Protocol-relative test","?next=//attacker.invalid/"],
+["Unsafe scheme test","?next=javascript:console.log(1)"],
+["Userinfo confusion","?next=https://trusted.example@attacker.invalid/"],
+["Encoded separator","?next=%2F%2Fattacker.invalid%2F"],
+["Double-encoded marker","?next=%252F%252Fattacker.invalid%252F"],
+["Hash HTML marker","#%3Cimg%20src%3Dx%3E"],
+["postMessage test object",'{"type":"navigation","href":"https://attacker.invalid/"}']
+],
+scenarios:[
+["Open redirect","Test destination parameters and verify the final browser location, including encoded and protocol-relative forms."],
+["DOM XSS via hash","Trace hash value from source to rendering sink; check whether it is inserted as text or parsed as HTML."],
+["postMessage","Send messages from an untrusted origin in a controlled test page and verify the receiver rejects them."],
+["URL parser mismatch","Compare validation result with the browser's actual parsed origin and final navigation."]
+],
+notes:"Use a reserved invalid domain such as attacker.invalid for redirect tests. Do not navigate users to real malicious sites. A hash value is client-side input even though it is not sent in the initial HTTP request."
+},
+{
+id:"upload",name:"File Upload Security",intro:"Test file upload validation, content processing, storage, retrieval and authorization. Consider direct uploads, multipart APIs and import pipelines.",term:"File extension and MIME type are user-controlled metadata. Strong validation considers content, parser behavior, storage location, access controls and safe serving headers.",
+sections:[
+["Beginner · Upload rules",[
+["Inventory upload features","Identify profile images, documents, attachments, imports, avatars and API multipart endpoints."],
+["Record allowed types and limits","Document extensions, MIME types, file size, count and dimensions."],
+["Test extension validation","Try uppercase, multiple extensions, trailing dots and unexpected suffixes using harmless files."],
+["Test MIME validation","Compare declared Content-Type with actual file signature and content."],
+["Test filename handling","Check path separators, Unicode, reserved names, long names and duplicate filenames."]
+]],
+["Intermediate · Content and storage",[
+["Test content validation","Use benign files with mismatched extension and MIME metadata; verify server-side content inspection."],
+["Test active content handling","Review HTML, SVG, PDF and office files for script or embedded content handling."],
+["Check storage location","Verify uploads are stored outside executable web roots or on isolated object storage."],
+["Check retrieval authorization","Attempt to access another test user's upload and verify ownership controls."],
+["Check serving headers","Review Content-Disposition, Content-Type and X-Content-Type-Options when files are downloaded."]
+]],
+["Advanced · Processing pipeline",[
+["Test image/document parsers","Review image resizing, PDF generation, OCR, archive extraction and document conversion for parser risks."],
+["Test archive extraction","Check path traversal, symlinks, nested archives, file count and decompression limits in a lab."],
+["Test malware scanning","Verify scanning occurs before files become available and failures are handled safely."],
+["Check overwrite and race behavior","Test duplicate names and concurrent uploads using disposable test objects."],
+["Check metadata leakage","Inspect EXIF, document properties, embedded paths and generated previews."]
+]],
+["Expert · Remediation",[
+["Use generated storage names","Do not trust client filenames for storage paths."],
+["Enforce allow-lists and content inspection","Validate extension, signature, parser success and business-specific constraints."],
+["Isolate and scan files","Store in non-executable isolated storage and scan before release."],
+["Retest access and lifecycle","Verify download authorization, deletion, retention and cache behavior."]
+]]
+],
+payloads:[
+["Plain text baseline","appsec-upload-test.txt"],
+["MIME mismatch test","Filename: sample.jpg | Content-Type: image/png | Body: harmless text"],
+["Double extension test","sample.jpg.txt"],
+["Uppercase extension test","SAMPLE.JPG"],
+["Trailing dot test","sample.jpg."],
+["Unicode filename test","résumé-test-文件.txt"],
+["Long filename test","A 240-character filename using harmless content"],
+["SVG harmless marker",'<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg"><text>appsec-test</text></svg>'],
+["Archive traversal name (lab review only)","../appsec-test.txt"],
+["Empty file test","0-byte file"]
+],
+scenarios:[
+["Validation matrix","Test each allowed and disallowed extension with matching and mismatched MIME/signature."],
+["Ownership check","Upload as user A and attempt retrieval as user B using the known test object reference."],
+["Safe serving","Inspect download headers and whether active content is rendered inline."],
+["Archive handling","Use a harmless test archive in an isolated environment to validate path normalization and extraction limits."]
+],
+notes:"Never upload web shells, malware or executable payloads to production. Use harmless text/image samples. Archive traversal and parser stress tests belong in an isolated test environment."
+},
+{
+id:"jwt",name:"JWT & OAuth 2.0",intro:"Review token validation, signing algorithms, claims, key handling and OAuth authorization flows.",term:"A JWT is a token format, not an authentication protocol by itself. OAuth 2.0 is an authorization framework; OpenID Connect adds an identity layer.",
+sections:[
+["Beginner · Identify token design",[
+["Identify token types","Determine whether the application uses JWT access tokens, opaque tokens, refresh tokens, ID tokens or session cookies."],
+["Decode token safely","Inspect header and claims without assuming decoded content is trusted or signature-verified."],
+["Review signing algorithm","Record alg, key type, key ID and expected algorithm. Do not assume HS256 is inherently insecure."],
+["Review claims","Check issuer, audience, subject, expiry, not-before, issued-at and scopes/roles."],
+["Identify OAuth flow","Determine whether authorization code with PKCE, client credentials or another grant is used."]
+]],
+["Intermediate · JWT validation",[
+["Test signature enforcement","Modify a harmless claim and verify the server rejects the altered token."],
+["Test algorithm confusion","Verify the server enforces an expected algorithm and key type rather than trusting token header selection."],
+["Test none algorithm rejection","Confirm unsigned tokens are rejected where signed JWTs are expected."],
+["Test key ID handling","Check kid lookup and ensure untrusted values cannot select arbitrary files, URLs or keys."],
+["Test issuer and audience","Use tokens with wrong iss or aud and verify rejection."],
+["Test expiry and not-before","Check expired, premature and missing time claims against the documented policy."]
+]],
+["Advanced · OAuth and key management",[
+["Test redirect URI validation","Verify exact registered redirect URI matching and reject open or wildcard redirects."],
+["Test PKCE","Confirm code_verifier is required and S256 is used for public clients."],
+["Test state and nonce","Verify state binds authorization response to the initiating session and nonce is validated for OIDC."],
+["Test refresh token rotation","Check reuse detection, revocation, expiry and client binding where applicable."],
+["Review client authentication","Protect confidential client secrets and avoid embedding them in browser/mobile public clients."],
+["Review JWKS handling","Check trusted JWKS URL, key rotation, cache behavior and algorithm/key compatibility."]
+]],
+["Expert · Session and architecture",[
+["Test token revocation model","Determine how logout, password change and account disablement affect access and refresh tokens."],
+["Test scope and privilege changes","Verify tokens cannot grant scopes or roles not authorized by the server."],
+["Test token leakage","Check URLs, browser storage, logs, referrers, crash reports and analytics."],
+["Test OAuth mix-up and code replay","Review issuer binding, redirect handling, authorization code single use and client binding."],
+["Review signing key lifecycle","Assess generation, storage, rotation, access controls and emergency revocation."]
+]]
+],
+payloads:[
+["JWT header inspection",'{"alg":"HS256","typ":"JWT"}'],
+["Unsigned token header test (reject expected)",'{"alg":"none","typ":"JWT"}'],
+["Wrong issuer claim",'{"iss":"https://untrusted.invalid","sub":"test-user","aud":"test-api"}'],
+["Wrong audience claim",'{"iss":"EXPECTED_ISSUER","sub":"test-user","aud":"wrong-api"}'],
+["Expired token claim",'{"exp":1,"sub":"test-user"}'],
+["Future nbf claim",'{"nbf":4102444800,"sub":"test-user"}'],
+["Modified subject test","Change sub to another TEST_USER_ID without resigning; server should reject."],
+["Unknown kid test",'{"alg":"RS256","kid":"unknown-test-key","typ":"JWT"}'],
+["Redirect URI test","redirect_uri=https://attacker.invalid/callback"],
+["PKCE method review","code_challenge_method=plain (verify policy rejects or disallows where S256 is required)"]
+],
+scenarios:[
+["Signature tamper","Change a non-sensitive claim without resigning and verify signature validation fails."],
+["Audience isolation","Use a valid test token issued for a different test API and verify this API rejects it."],
+["OAuth redirect validation","Try an unregistered redirect URI in a test client and verify exact matching."],
+["Refresh token replay","Use a test refresh token twice and verify documented rotation/reuse behavior."]
+],
+notes:"Never share live tokens or client secrets. Do not brute-force signing keys or use production credentials. HS256 is a valid algorithm when a sufficiently strong secret and correct validation are used; assess key strength and implementation rather than declaring it insecure by itself."
+},
+{
+id:"rate",name:"Rate Limiting",intro:"Evaluate controls that constrain abusive request volume, expensive operations, authentication attempts and resource consumption.",term:"A rate limit should be designed around the identity and cost of an action. IP-only throttling is often insufficient where users, tokens, tenants or operations have distinct risk.",
+sections:[
+["Beginner · Discover limits",[
+["Identify sensitive endpoints","List login, OTP, password reset, search, exports, uploads, expensive queries and account creation."],
+["Establish baseline thresholds","Send a small number of requests at a controlled pace and record response headers and behavior."],
+["Check rate-limit headers","Review RateLimit and Retry-After headers where implemented."],
+["Identify limit dimensions","Determine whether limits are per IP, user, token, tenant, endpoint or global."],
+["Check status and error behavior","Verify throttled requests receive consistent responses without leaking sensitive details."]
+]],
+["Intermediate · Bypass resistance",[
+["Test distributed identity dimensions","Compare behavior across two test users and approved test source addresses."],
+["Test header trust","Check whether client-controlled forwarding headers affect rate-limit identity; coordinate before spoofing proxy headers."],
+["Test alternate routes","Check whether equivalent API versions, methods or aliases share the same quota."],
+["Test credential guessing controls","Assess login, OTP and recovery throttles with test accounts and agreed attempt limits."],
+["Test concurrency","Check whether simultaneous requests bypass counters or overshoot quotas."]
+]],
+["Advanced · Cost-aware limits",[
+["Test expensive operations","Assess exports, reports, nested queries and large searches for cost-based controls."],
+["Test burst and sustained limits","Check short bursts and longer windows without creating service impact."],
+["Test per-object limits","Review OTP sends, invite creation and transaction actions per account or destination."],
+["Check reset behavior","Review fixed-window boundaries, sliding windows and token bucket behavior."],
+["Check graceful degradation","Verify queued work, backoff and Retry-After behavior."]
+]],
+["Expert · Remediation",[
+["Use layered quotas","Apply limits by identity, operation, tenant and infrastructure cost."],
+["Make counters atomic","Ensure concurrent requests cannot bypass counters through race conditions."],
+["Protect sensitive workflows","Add progressive delays, risk controls and abuse monitoring for authentication and recovery."],
+["Retest with agreed thresholds","Document exact rate, window, identity and expected throttle response."]
+]]
+],
+payloads:[
+["Single baseline request","GET /api/test"],
+["Observe rate headers","curl -i https://YOUR-AUTHORIZED-HOST/api/test"],
+["Retry-After review","Retry-After: 30"],
+["Low-volume burst test","Send 5 requests at a controlled pace in staging"],
+["Concurrency test","Run a small approved number of parallel requests against a test endpoint"],
+["Identity comparison","Repeat using two dedicated test users and compare quota behavior"]
+],
+scenarios:[
+["Per-user vs per-IP","Compare quota behavior for two test accounts from the same approved test source."],
+["Route consistency","Compare equivalent endpoint versions and methods to ensure limits are shared appropriately."],
+["Atomic counter","Run a small concurrency test in staging and compare accepted count with configured quota."],
+["Recovery behavior","Verify Retry-After, reset window and client backoff guidance."]
+],
+notes:"Do not run high-volume floods or stress tests against production. Agree on request ceilings, duration, monitoring contacts and stop conditions first."
+},
+{
+id:"click",name:"Clickjacking",intro:"Determine whether sensitive pages can be embedded in an attacker-controlled frame and trick users into unintended clicks.",term:"CSP frame-ancestors controls which origins may embed a page. X-Frame-Options is an older control with more limited behavior.",
+sections:[
+["Beginner · Identify sensitive pages",[
+["List frame-sensitive routes","Review login, account settings, payments, admin panels and confirmation pages."],
+["Inspect framing headers","Check CSP frame-ancestors and X-Frame-Options on all sensitive responses."],
+["Check redirect behavior","Verify redirects and alternate hostnames do not expose an unprotected copy."],
+["Review authentication context","Determine whether the page is accessible in a third-party frame with the victim's session."],
+["Check UI redress protections","Review overlays, confirmation steps and sensitive action design."]
+]],
+["Intermediate · Controlled frame test",[
+["Attempt same-origin framing","Use a local test page to determine whether the application can be framed by itself."],
+["Attempt cross-origin framing","Use an authorized test origin and inspect whether the browser blocks embedding."],
+["Check CSP consistency","Verify frame-ancestors is delivered as an HTTP response header and not only a meta tag."],
+["Check legacy header handling","Review X-Frame-Options DENY or SAMEORIGIN and browser compatibility."],
+["Test alternate content paths","Check mobile, legacy, error and subdomain routes."]
+]],
+["Advanced · Workflow impact",[
+["Test click-sensitive actions","In a test account, evaluate whether a framed UI can expose state-changing controls."],
+["Review frame-busting scripts","Do not rely solely on JavaScript frame-busters; test browser-enforced headers."],
+["Check nested frame policies","Review ancestor restrictions and integrations that legitimately embed the application."],
+["Assess CSRF interaction","Determine whether a clickjacking scenario also requires CSRF or user interaction."]
+]],
+["Expert · Remediation",[
+["Set frame-ancestors explicitly","Use 'none' or a precise trusted origin list based on product needs."],
+["Set X-Frame-Options for compatibility","Use DENY or SAMEORIGIN where suitable alongside CSP."],
+["Protect sensitive workflows","Require clear confirmation and re-authentication for high-impact actions."],
+["Retest all routes","Check headers after redirects and across all application entry points."]
+]]
+],
+payloads:[
+["CSP deny framing","Content-Security-Policy: frame-ancestors 'none'"],
+["Same-origin framing","Content-Security-Policy: frame-ancestors 'self'"],
+["Legacy deny framing","X-Frame-Options: DENY"],
+["Legacy same-origin framing","X-Frame-Options: SAMEORIGIN"],
+["Local frame test",'<!doctype html><iframe src="https://YOUR-AUTHORIZED-HOST/sensitive-test-page"></iframe>']
+],
+scenarios:[
+["Frame test","Host a simple iframe page on an authorized test origin and observe browser console / network behavior."],
+["Route coverage","Compare frame protection on login, settings, admin, errors and redirects."],
+["Workflow review","Assess whether high-impact actions have confirmation or re-authentication beyond a click."],
+["Header enforcement","Verify CSP frame-ancestors is an HTTP header and not overridden by another layer."]
+],
+notes:"Do not trick real users or perform sensitive actions. Use a test account and a local controlled framing page."
+},
+{
+id:"traversal",name:"Directory Traversal (LFI / RFI)",intro:"Review file path inputs and include mechanisms for traversal outside intended directories or remote resource inclusion.",term:"Path traversal manipulates a path to escape an intended directory. LFI includes or reads local resources; RFI involves including remote resources and depends on platform configuration.",
+sections:[
+["Beginner · Identify file paths",[
+["Find file-related inputs","Review download, preview, export, template, language, image and document endpoints."],
+["Map source-to-file sink","Identify where input reaches file open, read, include, archive or template APIs."],
+["Understand expected base directory","Document allowed directory, file types and canonical path policy."],
+["Check error disclosure","Look for absolute paths, usernames, application roots and filesystem details."],
+["Test normal and invalid filenames","Establish expected behavior for valid files, missing files and disallowed extensions."]
+]],
+["Intermediate · Traversal validation",[
+["Test relative traversal patterns","Use harmless test files in a lab to verify whether parent-directory segments are normalized and blocked."],
+["Test encoded traversal","Check URL encoding, double encoding, mixed separators and decoding order."],
+["Test absolute path handling","Verify absolute paths and drive/UNC paths cannot bypass the intended base directory."],
+["Test canonicalization and symlinks","Check realpath resolution and symlink handling before file access."],
+["Test file extension enforcement","Verify allow-lists are applied after canonicalization and cannot be bypassed with suffix tricks."]
+]],
+["Advanced · Include and wrapper behavior",[
+["Review LFI include sinks","Check dynamic include/require/template loading and whether user input selects a file."],
+["Review RFI configuration","Confirm remote inclusion is disabled unless explicitly required and tightly controlled."],
+["Check archive extraction paths","Assess ZIP/TAR extraction for traversal and symlink escapes in an isolated environment."],
+["Check file read vs execute","Determine whether a path is read as data, rendered as a template or executed as code."],
+["Check access control","Verify users cannot retrieve other tenants' files by changing identifiers or paths."]
+]],
+["Expert · Remediation",[
+["Use server-generated file IDs","Map opaque identifiers to approved storage objects instead of accepting raw paths."],
+["Canonicalize and enforce base path","Resolve the final path and verify it remains inside the intended directory."],
+["Disable remote inclusion","Turn off remote file inclusion and restrict network access from file processors."],
+["Retest encoding and symlink cases","Validate all path forms and archive extraction paths after remediation."]
+]]
+],
+payloads:[
+["Relative traversal marker","../appsec-test.txt"],
+["Nested traversal marker","../../appsec-test.txt"],
+["URL-encoded traversal","%2e%2e%2fappsec-test.txt"],
+["Double-encoded traversal","%252e%252e%252fappsec-test.txt"],
+["Backslash traversal marker","..\\appsec-test.txt"],
+["Mixed separator marker","..%2f..\\appsec-test.txt"],
+["Absolute path validation","/safe-test-root/appsec-test.txt"],
+["Windows drive path validation","C:\\safe-test-root\\appsec-test.txt"],
+["Null-byte handling review","appsec-test%00.txt"],
+["Archive entry marker","../appsec-test.txt"]
+],
+scenarios:[
+["Controlled canary file","Place a harmless canary file outside the intended directory in a lab and verify it cannot be read."],
+["Encoding matrix","Compare raw, URL-encoded, double-encoded and mixed-separator input handling."],
+["Symlink check","Use a lab symlink pointing outside the allowed root and verify canonical-path enforcement."],
+["Archive extraction","Use a harmless test archive in isolation and inspect the resolved output paths."]
+],
+notes:"Do not target sensitive operating-system files or attempt remote code execution. Use a harmless canary file and isolated archive tests. LFI and RFI are distinct outcomes; prove what the application actually does with the path."
+},
+{
+id:"session",name:"Session Fixation & Hijacking",intro:"Assess whether session identifiers can be forced, stolen, replayed or retained across authentication and privilege changes.",term:"Session fixation occurs when an attacker can cause a victim to authenticate using a session identifier known to the attacker. Hijacking is unauthorized use of a valid session token.",
+sections:[
+["Beginner · Session lifecycle",[
+["Capture pre-auth session","Record whether a session exists before login and whether it changes after authentication."],
+["Check session rotation","Verify rotation after login, MFA completion and privilege elevation."],
+["Check logout invalidation","Replay a test session after logout and confirm it is rejected."],
+["Review idle and absolute timeout","Verify expiration is enforced server-side."],
+["Review cookie protections","Check Secure, HttpOnly, SameSite, scope and token entropy."]
+]],
+["Intermediate · Fixation and replay",[
+["Test attacker-supplied session IDs","Determine whether the server accepts a chosen or URL-supplied session identifier."],
+["Test session reuse","Check whether the same session remains valid across login, password change or role change."],
+["Test concurrent sessions","Review session management and revocation when multiple devices log in."],
+["Test token replay","Replay a test session from a separate client and inspect risk controls."],
+["Check session binding carefully","Assess whether IP/device binding is used appropriately without relying on brittle signals alone."]
+]],
+["Advanced · Theft exposure",[
+["Review XSS and storage exposure","Check whether session tokens are readable by JavaScript or exposed in URLs, logs and browser storage."],
+["Review TLS and proxy handling","Ensure session identifiers are never transmitted over plaintext or logged by intermediaries."],
+["Test account recovery effects","Verify password reset, MFA reset and account disablement revoke existing sessions."],
+["Review remember-me tokens","Check persistent login token rotation, revocation and secure storage."]
+]],
+["Expert · Remediation",[
+["Rotate on trust changes","Issue a fresh unpredictable session ID after authentication and privilege changes."],
+["Revoke server-side","Invalidate sessions on logout and sensitive account events."],
+["Use secure cookie defaults","Set Secure, HttpOnly, SameSite and narrow scope."],
+["Monitor anomalous reuse","Detect suspicious concurrent use and provide user-visible session management."]
+]]
+],
+payloads:[
+["Session cookie example","Set-Cookie: session=RANDOM_TEST_VALUE; Secure; HttpOnly; SameSite=Lax"],
+["Pre/post login comparison","Compare test session ID before login and after login"],
+["Logout replay","Replay the same test session after logout; expected: rejected"],
+["Password-change replay","Replay a prior test session after password change; expected per policy: revoked or revalidated"],
+["URL token check","Review whether session identifiers appear in query strings or fragments"]
+],
+scenarios:[
+["Fixation test","Set a test session before login, authenticate, then check whether the identifier rotates."],
+["Logout test","Copy a test session, log out, and replay it in Repeater."],
+["Password reset test","Reset a test account password and check whether prior sessions remain valid."],
+["Concurrent session review","Use two test browsers and inspect session revocation and user session controls."]
+],
+notes:"Never use another person's session or copy production credentials. Use dedicated test accounts and redact all session values from evidence."
+},
+{
+id:"ldap",name:"LDAP Injection",intro:"Check whether untrusted input changes LDAP filter or distinguished-name syntax used for directory queries.",term:"LDAP filters and distinguished names have different grammars and escaping rules. Use parameterized directory APIs where available and escape according to the exact LDAP context.",
+sections:[
+["Beginner · Identify directory inputs",[
+["Find LDAP-backed features","Review login, user search, group lookup, address books, provisioning and directory sync."],
+["Map input to LDAP operations","Identify whether values reach search filters, bind DNs or directory attributes."],
+["Establish baseline behavior","Capture valid and invalid username/search behavior."],
+["Review error messages","Look for LDAP filter syntax, server names, base DNs and directory implementation details."],
+["Identify account enumeration","Compare responses and timing for existing and non-existing test users."]
+]],
+["Intermediate · Filter validation",[
+["Test special character handling","Check parentheses, asterisks, backslashes and null bytes in a controlled test directory."],
+["Test wildcard behavior","Determine whether user input can broaden search results unexpectedly."],
+["Test boolean filter manipulation","Verify user input cannot alter filter logic or bypass authentication."],
+["Test DN escaping","Review commas, plus signs, quotes, backslashes and leading/trailing spaces in DN components."],
+["Check search scope and size limits","Ensure queries cannot enumerate the entire directory or exceed intended scope."]
+]],
+["Advanced · Authorization and directory behavior",[
+["Test group membership checks","Verify group and role resolution cannot be manipulated through filter injection."],
+["Test attribute disclosure","Check whether search endpoints expose sensitive directory attributes."],
+["Test nested groups and referrals","Review referral handling, nested group logic and external directory connections."],
+["Review bind account privilege","Ensure application directory credentials have read/write permissions only where needed."]
+]],
+["Expert · Remediation",[
+["Use safe LDAP APIs","Use parameterized filter construction or correct context-specific escaping."],
+["Separate filter and DN handling","Do not reuse escaping rules across LDAP filter and DN contexts."],
+["Constrain search base and attributes","Apply least privilege, narrow base DNs, attribute allow-lists and size limits."],
+["Retest authentication and search","Verify malformed input cannot change filter semantics or expose directory data."]
+]]
+],
+payloads:[
+["Asterisk handling","*"],
+["Parenthesis handling","("],
+["Closing parenthesis handling",")"],
+["Backslash handling","\\"],
+["Filter delimiter probe","*)(objectClass=*)"],
+["Boolean filter marker","(&(objectClass=person)(uid=TEST_USER))"],
+["DN comma handling","Shimpi, Jayesh"],
+["DN plus handling","Jayesh+AppSec"],
+["Leading space handling"," test-user"],
+["Null character review","test%00user"]
+],
+scenarios:[
+["Login filter review","Use a test directory account and compare normal username behavior with special-character inputs."],
+["Search broadening","Check whether wildcard input returns more records than intended."],
+["DN escaping","Create a test directory entry with punctuation in its name and verify correct escaping."],
+["Directory scope","Verify search base, returned attributes and result count are constrained."]
+],
+notes:"Use a dedicated test directory. Do not attempt to enumerate real employee directories or modify directory entries. LDAP filter and DN escaping are different; verify the exact API context."
+},
+{
+id:"race",name:"Race Conditions",intro:"Test whether concurrent requests can violate business invariants, duplicate actions or bypass state checks.",term:"A race condition occurs when the result depends on timing between concurrent operations. TOCTOU means a resource is checked and then used after its state may have changed.",
+sections:[
+["Beginner · Identify critical operations",[
+["Map high-value workflows","Review coupon redemption, balance changes, inventory, booking, transfers, voting and one-time actions."],
+["Identify invariants","Document rules such as one coupon per user, balance cannot go negative or an order can be paid once."],
+["Capture baseline request","Record the request, response and state before a single normal execution."],
+["Identify check/use sequence","Determine whether validation and state mutation occur in separate steps."],
+["Use disposable test records","Create isolated test users and objects with no real financial or customer impact."]
+]],
+["Intermediate · Controlled concurrency",[
+["Replay simultaneous requests","Send a small, approved number of concurrent identical requests against test data."],
+["Test duplicate redemption","Check whether a one-time token, coupon or invitation can be consumed twice."],
+["Test balance and inventory invariants","Verify atomic updates prevent overspend or oversell."],
+["Test idempotency keys","Repeat requests with same, missing and different keys and compare behavior."],
+["Test retry and timeout behavior","Check whether client retries can duplicate a completed operation."]
+]],
+["Advanced · TOCTOU and workflow state",[
+["Test state transitions","Submit competing requests that attempt incompatible transitions, such as approve and cancel."],
+["Test object ownership changes","Check whether ownership or permissions can change between authorization and mutation."],
+["Test multi-step transaction boundaries","Review whether all related updates commit atomically or partial state can persist."],
+["Test distributed workers","Assess duplicate queue delivery, job retries and concurrent consumers."],
+["Check locking and isolation","Review database constraints, transactions, row locks and optimistic concurrency controls."]
+]],
+["Expert · Remediation",[
+["Enforce invariants in the database","Use unique constraints, conditional updates and transactional guarantees."],
+["Make operations idempotent","Use server-validated idempotency keys for retryable operations."],
+["Use atomic state transitions","Update only when the expected prior state matches."],
+["Retest under realistic concurrency","Use bounded parallelism in staging and verify final persisted state, not only HTTP responses."]
+]]
+],
+payloads:[
+["Duplicate request concept","Replay the same authorized test request twice"],
+["Small concurrency check","Send 2–3 simultaneous requests against a disposable test object"],
+["Idempotency key example","Idempotency-Key: appsec-test-unique-001"],
+["Expected-state update example","PATCH with expectedVersion=1"],
+["Retry behavior","Replay after a simulated client timeout using the same test idempotency key"]
+],
+scenarios:[
+["One-time coupon","Attempt two concurrent redemptions of a disposable test coupon and verify exactly one succeeds."],
+["Inventory invariant","Reserve the final unit using two controlled test sessions and verify stock never becomes negative."],
+["Payment idempotency","Simulate a retry in a payment sandbox and confirm one logical transaction is created."],
+["State transition","Race approve and cancel operations on a test workflow and verify only a valid final state persists."]
+],
+notes:"Never race real payments, production inventory or customer accounts. Use a sandbox and coordinate request counts. Verify database state and audit records, not just response codes."
+},
+{
+id:"cache",name:"Web Cache Poisoning",intro:"Assess whether unkeyed or inconsistently keyed request inputs influence cached responses served to other users.",term:"A cache key determines which requests share a cached response. Cache poisoning can occur when a response is influenced by an input that is not included in the cache key.",
+sections:[
+["Beginner · Map caching",[
+["Identify cache layers","Determine browser, CDN, reverse proxy, gateway and application cache behavior."],
+["Inspect cache headers","Review Cache-Control, Vary, Age, ETag, Expires and vendor-specific cache indicators."],
+["Identify cacheable routes","Check static assets, public pages, redirects and API responses."],
+["Establish cache behavior","Send repeat requests and compare Age, response body and cache hit/miss indicators."],
+["Check authenticated response caching","Verify personalized responses are not shared across users."]
+]],
+["Intermediate · Key and input analysis",[
+["Identify cache-key components","Determine whether path, query, host, selected headers and cookies affect the cache key."],
+["Review unkeyed inputs","Check headers or parameters that influence response content but may not be included in the cache key."],
+["Test Vary behavior","Verify the cache varies on headers that materially change the response."],
+["Check host handling","Review Host and forwarded-host influences on absolute URLs and redirects."],
+["Check query normalization","Assess parameter order, duplicate parameters, encoding and ignored tracking parameters."]
+]],
+["Advanced · Controlled poisoning checks",[
+["Use unique cache-busting markers","Use harmless unique markers and a dedicated test route to detect cache sharing."],
+["Check response splitting adjacency","Review whether untrusted values can influence response headers; coordinate before testing."],
+["Test redirect and error caching","Check whether redirects or error responses are cached unexpectedly."],
+["Test content negotiation","Review Accept, language, encoding and device headers against cache-key behavior."],
+["Check cache deception","Verify static-looking paths cannot cause sensitive dynamic responses to be stored publicly."]
+]],
+["Expert · Remediation",[
+["Align cache key and response variation","Include every input that changes the response or remove that input from response generation."],
+["Set explicit cache policy","Use private/no-store for sensitive personalized responses."],
+["Normalize at trusted edge","Ensure CDN and origin interpret paths, headers and query parameters consistently."],
+["Purge and regression test","Purge affected entries and verify no cross-user response reuse remains."]
+]]
+],
+payloads:[
+["Cache header inspection","curl -sS -D - -o /dev/null https://YOUR-AUTHORIZED-HOST/"],
+["Unique query marker","?appsec_cache_test=UNIQUE_001"],
+["Language variation","Accept-Language: en"],
+["Encoding variation","Accept-Encoding: gzip"],
+["Host handling review","Host: YOUR-AUTHORIZED-HOST"],
+["Forwarded host review","X-Forwarded-Host: test.invalid"],
+["Cache-control review","Cache-Control: no-cache"],
+["Repeat request check","Send the same harmless request twice and compare Age / cache status"]
+],
+scenarios:[
+["Unkeyed header check","On a dedicated test route, vary one response-influencing header and observe whether a later baseline request receives the altered response."],
+["User-specific cache","Request a personalized page as user A, then user B, and verify there is no cross-user content leakage."],
+["Query normalization","Compare reordered and duplicated query parameters to determine cache-key behavior."],
+["Cache deception","Use a harmless test path suffix and verify dynamic sensitive responses are not cached as static assets."]
+],
+notes:"Cache poisoning can affect other users. Restrict tests to a dedicated staging host or isolated route with a unique marker. Do not attempt to poison shared production caches."
+}
+];
+
+const extraTopics = [
+["csti","Client-Side Template Injection (CSTI)"],
+["openredirect","Open Redirect"],
+["cors","CORS Misconfiguration"],
+["deser","Insecure Deserialization"],
+["nosql","NoSQL Injection"],
+["idor","IDOR / BOLA"],
+["ssrf2","Cloud Metadata / SSRF"],
+["websocket","WebSocket Security"],
+["graphql-upload","GraphQL Upload Security"],
+["host","Host Header Injection"],
+["cache-deception","Web Cache Deception"],
+["prototype","Prototype Pollution"],
+["path","Path Traversal"],
+["info","Information Disclosure"],
+["tls","TLS / Certificate Configuration"],
+["dns","DNS / Subdomain Takeover"],
+["supply","Third-Party / Supply Chain Security"],
+["secrets","Secrets Exposure"],
+["oauth","OAuth / OIDC Deep Dive"]
+];
+const nav = document.getElementById("nav");
+let active = "graphql";
+let activeTab = "payloads";
+const storageKey = "appsec-hub-progress-v1";
+let progressState = {};
+try{progressState=JSON.parse(localStorage.getItem(storageKey)||"{}")}catch(e){}
+function save(){try{localStorage.setItem(storageKey,JSON.stringify(progressState))}catch(e){}}
+function topicById(id){return topics.find(t=>t.id===id)}
+function renderNav(filter=""){
+ nav.innerHTML="";
+ const filtered=topics.filter(t=>t.name.toLowerCase().includes(filter.toLowerCase()));
+ filtered.forEach(t=>{const b=document.createElement("button");b.textContent=t.name;b.className=t.id===active?"active":"";b.onclick=()=>selectTopic(t.id);nav.appendChild(b)});
+ if(!filtered.length)nav.innerHTML='<div class="empty">No matching topic.</div>';
+}
+function selectTopic(id){active=id;renderNav(document.getElementById("search").value);renderTopic()}
+function renderTopic(){
+ const t=topicById(active);if(!t)return;
+ document.getElementById("title").textContent=t.name;
+ document.getElementById("category").textContent="Application security testing";
+ document.getElementById("intro").textContent=t.intro;
+ document.querySelector("#term p").textContent=t.term;
+ const all=t.sections.flatMap(s=>s[1]);document.getElementById("checkCount").textContent=all.length;
+ const done=all.filter((x,i)=>progressState[active+"-"+i]).length;
+ document.getElementById("doneCount").textContent=done;document.getElementById("percent").textContent=Math.round(done/all.length*100)+"%";
+ document.getElementById("progress").style.width=(done/all.length*100)+"%";
+ const host=document.getElementById("checklist");host.innerHTML="";let index=0;
+ t.sections.forEach((s,si)=>{
+  const section=document.createElement("section");section.className="level";
+  const head=document.createElement("div");head.className="level-head";head.innerHTML=`<h2>${esc(s[0])}</h2><span>${s[1].length} checks</span>`;section.appendChild(head);
+  s[1].forEach(item=>{
+   const row=document.createElement("label");row.className="check";
+   const cb=document.createElement("input");cb.type="checkbox";cb.checked=!!progressState[active+"-"+index];
+   const content=document.createElement("div");content.innerHTML=`<strong>${esc(item[0])}</strong><p>${esc(item[1])}</p>`;
+   cb.addEventListener("change",()=>{progressState[active+"-"+(indexFor(active,item))]=cb.checked;save();renderTopic()});
+   row.append(cb,content);section.appendChild(row);index++;
+  });
+  host.appendChild(section);
+ });
+ renderRight(t);
+}
+function indexFor(id,item){let i=0;for(const s of topicById(id).sections){for(const x of s[1]){if(x===item)return i;i++}}return -1}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function renderRight(t){
+ const p=document.getElementById("payloads");p.innerHTML="";
+ t.payloads.forEach((x,i)=>{const d=document.createElement("div");d.className="payload";d.innerHTML=`<div class="payload-label">${esc(x[0])}</div><code>${esc(x[1])}</code><button class="copy">Copy</button>`;d.querySelector("button").onclick=()=>copyText(x[1]);p.appendChild(d)});
+ document.getElementById("payloadCount").textContent=t.payloads.length+" examples";
+ const s=document.getElementById("scenarios");s.innerHTML="";
+ t.scenarios.forEach(x=>{const d=document.createElement("div");d.className="scenario";d.innerHTML=`<b>${esc(x[0])}</b><p>${esc(x[1])}</p>`;s.appendChild(d)});
+ document.getElementById("notes").textContent=t.notes;
+ showTab(activeTab);
+}
+function copyText(s){if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(s).then(()=>{}).catch(()=>fallbackCopy(s))}else fallbackCopy(s)}
+function fallbackCopy(s){const x=document.createElement("textarea");x.value=s;document.body.appendChild(x);x.select();document.execCommand("copy");x.remove()}
+function showTab(tab){activeTab=tab;["payloads","scenarios","notes"].forEach(k=>document.getElementById(k).hidden=k!==tab);document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab))}
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+document.getElementById("search").addEventListener("input",e=>renderNav(e.target.value));
+document.getElementById("reset").onclick=()=>{if(confirm("Reset checklist progress for this topic?")){Object.keys(progressState).filter(k=>k.startsWith(active+"-")).forEach(k=>delete progressState[k]);save();renderTopic()}};
+document.getElementById("expandAll").onclick=()=>document.querySelectorAll(".level").forEach(x=>x.style.display="block");
+document.getElementById("collapseAll").onclick=()=>document.querySelectorAll(".level").forEach(x=>x.style.display="none");
+renderNav();renderTopic();
+</script>
+</body>
+</html>
